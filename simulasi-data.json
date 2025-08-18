@@ -1,0 +1,212 @@
+[
+  {
+    "category": "matematika",
+    "grade": "1",
+    "title": "Penjumlahan",
+    "icon": "➕",
+    "badgeColor": "primary",
+    "desc": "Belajar penjumlahan dengan cara yang menyenangkan menggunakan gambar dan animasi",
+    "file": "penjumlahan",
+    "description": "tambah angka hitungan dasar"
+  },
+  {
+    "category": "matematika",
+    "grade": "3",
+    "title": "Perkalian",
+    "icon": "✖️",
+    "badgeColor": "primary",
+    "desc": "Belajar tabel perkalian dengan cara interaktif dan permainan yang menyenangkan",
+    "file": "perkalian",
+    "description": "kali angka tabel perkalian"
+  },
+  {
+    "category": "matematika",
+    "grade": "5",
+    "title": "Pecahan",
+    "icon": "🍰",
+    "badgeColor": "primary",
+    "desc": "Memahami konsep pecahan dengan visualisasi kue, pizza, dan objek yang mudah dipahami",
+    "file": "pecahan",
+    "description": "pembilang penyebut bagian utuh"
+  },
+  {
+    "category": "ipa",
+    "grade": "2",
+    "title": "Bagian Tubuh",
+    "icon": "👤",
+    "badgeColor": "success",
+    "desc": "Mengenal bagian-bagian tubuh manusia dan fungsinya dengan cara yang interaktif",
+    "file": "bagian-tubuh",
+    "description": "mata hidung telinga tangan kaki"
+  },
+  {
+    "category": "ipa",
+    "grade": "4",
+    "title": "Siklus Air",
+    "icon": "💧",
+    "badgeColor": "success",
+    "desc": "Memahami perjalanan air dari laut ke langit dan kembali ke bumi dengan animasi menarik",
+    "file": "siklus-air",
+    "description": "hujan awan sungai laut"
+  },
+  {
+    "category": "ipa",
+    "grade": "6",
+    "title": "Tata Surya",
+    "icon": "🌍",
+    "badgeColor": "success",
+    "desc": "Menjelajahi planet-planet di tata surya dan memahami pergerakan bumi mengelilingi matahari",
+    "file": "tata-surya",
+    "description": "matahari planet bumi bulan"
+  },
+  {
+    "category": "bahasa",
+    "grade": "1",
+    "title": "Mengenal Huruf",
+    "icon": "🔤",
+    "badgeColor": "warning",
+    "desc": "Belajar mengenal huruf A-Z dengan suara, gambar, dan permainan interaktif",
+    "file": "mengenal-huruf",
+    "description": "abjad vokal konsonan membaca"
+  },
+  {
+    "category": "bahasa",
+    "grade": "3",
+    "title": "Membaca Kata",
+    "icon": "📖",
+    "badgeColor": "warning",
+    "desc": "Belajar membaca dengan menggabungkan suku kata menjadi kata yang bermakna",
+    "file": "membaca-kata",
+    "description": "suku kata suku kata gabung"
+  },
+  {
+    "category": "bahasa",
+    "grade": "5",
+    "title": "Menulis Cerita",
+    "icon": "✍️",
+    "badgeColor": "warning",
+    "desc": "Belajar menulis cerita dengan panduan struktur dan ide-ide kreatif yang menarik",
+    "file": "menulis-cerita",
+    "description": "karangan paragraf kalimat ide"
+  },
+  {
+    "category": "ips",
+    "grade": "2",
+    "title": "Keluarga",
+    "icon": "👨‍👩‍👧‍👦",
+    "badgeColor": "danger",
+    "desc": "Mengenal anggota keluarga, peran masing-masing, dan kehidupan sehari-hari di rumah",
+    "file": "keluarga",
+    "description": "ayah ibu kakak adik rumah"
+  },
+  {
+    "category": "ips",
+    "grade": "4",
+    "title": "Peta Indonesia",
+    "icon": "🗺️",
+    "badgeColor": "danger",
+    "desc": "Mengenal pulau-pulau, provinsi, dan kota-kota besar di Indonesia dengan peta interaktif",
+    "file": "peta-indonesia",
+    "description": "pulau provinsi kota daerah"
+  },
+  {
+    "category": "ips",
+    "grade": "6",
+    "title": "Sejarah Indonesia",
+    "icon": "🏛️",
+    "badgeColor": "danger",
+    "desc": "Mempelajari perjuangan kemerdekaan Indonesia dan para pahlawan bangsa",
+    "file": "sejarah-indonesia",
+    "description": "kemerdekaan pahlawan proklamasi"
+  },
+  {
+    "category": "matematika",
+    "grade": "7",
+    "title": "Aljabar Dasar",
+    "icon": "📐",
+    "badgeColor": "primary",
+    "desc": "Memahami variabel, koefisien, dan menyelesaikan persamaan linear satu variabel",
+    "file": "aljabar-dasar",
+    "description": "variabel persamaan linear x y"
+  },
+  {
+    "category": "ipa",
+    "grade": "8",
+    "title": "Hukum Newton",
+    "icon": "⚖️",
+    "badgeColor": "success",
+    "desc": "Simulasi interaktif tentang gaya, massa, dan percepatan dalam kehidupan sehari-hari",
+    "file": "hukum-newton",
+    "description": "gaya gerak massa percepatan fisika"
+  },
+  {
+    "category": "ipa",
+    "grade": "9",
+    "title": "Asam Basa",
+    "icon": "🧪",
+    "badgeColor": "success",
+    "desc": "Laboratorium virtual untuk menguji pH larutan dan memahami sifat asam basa",
+    "file": "asam-basa",
+    "description": "ph indikator kimia larutan"
+  },
+  {
+    "category": "matematika",
+    "grade": "10",
+    "title": "Trigonometri",
+    "icon": "📊",
+    "badgeColor": "primary",
+    "desc": "Memahami fungsi sin, cos, tan dengan lingkaran satuan dan grafik interaktif",
+    "file": "trigonometri",
+    "description": "sin cos tan sudut lingkaran"
+  },
+  {
+    "category": "ipa",
+    "grade": "11",
+    "title": "Gelombang",
+    "icon": "〰️",
+    "badgeColor": "success",
+    "desc": "Simulasi gelombang dengan kontrol frekuensi, amplitudo, dan panjang gelombang",
+    "file": "gelombang",
+    "description": "frekuensi amplitudo panjang gelombang fisika"
+  },
+  {
+    "category": "ipa",
+    "grade": "12",
+    "title": "Elektrokimia",
+    "icon": "🔋",
+    "badgeColor": "success",
+    "desc": "Memahami sel galvanis dan elektrolisis dengan simulasi laboratorium virtual",
+    "file": "elektrokimia",
+    "description": "sel galvanis elektrolisis kimia"
+  },
+  {
+    "category": "seni",
+    "grade": "1",
+    "title": "Menggambar",
+    "icon": "🎨",
+    "badgeColor": "info",
+    "desc": "Belajar menggambar dengan berbagai warna, bentuk, dan mengembangkan kreativitas",
+    "file": "menggambar",
+    "description": "warna bentuk garis kreativitas"
+  },
+  {
+    "category": "seni",
+    "grade": "3",
+    "title": "Lagu Anak",
+    "icon": "🎵",
+    "badgeColor": "info",
+    "desc": "Belajar menyanyikan lagu anak-anak Indonesia dengan nada dan irama yang tepat",
+    "file": "lagu-anak",
+    "description": "musik nada irama bernyanyi"
+  },
+  {
+    "category": "seni",
+    "grade": "5",
+    "title": "Tari Tradisional",
+    "icon": "💃",
+    "badgeColor": "info",
+    "desc": "Mengenal dan mempelajari gerakan tari tradisional dari berbagai daerah di Indonesia",
+    "file": "tari-tradisional",
+    "description": "gerakan budaya daerah indonesia"
+  }
+]
