@@ -105,7 +105,7 @@ function openSimulation(type) {
   fetch(simulationLink, { method: 'HEAD' })
     .then(response => {
       if (response.ok) {
-        window.open(simulationLink, '_blank');
+        window.open(simulationLink, simulationLink);
       } else {
         showSimulationNotReady(type, simulationLink);
       }
