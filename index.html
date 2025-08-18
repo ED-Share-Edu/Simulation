@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ED-Share - Platform Simulasi Pembelajaran Interaktif</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-3 gradient-icon" href="#">
+                <i class="bi bi-mortarboard-fill"></i> ED-Share
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#simulasi">Simulasi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#tujuan">Tujuan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#fitur">Fitur</a>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-gradient text-white px-4 ms-2" data-bs-toggle="modal" data-bs-target="#donationModal">
+                            <i class="bi bi-heart-fill"></i> Donasi
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10 text-center fade-in">
+                    <h1 class="display-4 fw-bold mb-4">
+                        🎓 Selamat Datang di ED-Share
+                    </h1>
+                    <p class="lead mb-5 mx-auto" style="max-width: 600px;">
+                        Platform simulasi pembelajaran interaktif yang membantu guru menciptakan pengalaman belajar yang menarik dan efektif untuk siswa
+                    </p>
+                    <!-- Action Buttons -->
+                    <div class="d-flex gap-3 justify-content-center flex-wrap mb-5">
+                        <button class="btn btn-light btn-lg px-5 py-3 rounded-pill shadow-sm" onclick="document.getElementById('simulasi').scrollIntoView({behavior: 'smooth'})">
+                            <i class="bi bi-play-circle-fill me-2"></i> Mulai Eksplorasi
+                        </button>
+                        <button class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill" data-bs-toggle="modal" data-bs-target="#requestModal">
+                            <i class="bi bi-plus-circle me-2"></i> Request Simulasi
+                        </button>
+                    </div>
+                    <!-- Stats Card -->
+                    <div class="row justify-content-center fade-in stagger-2">
+                        <div class="col-md-6 col-lg-4">
+                            <div class="stats-card-new">
+                                <div class="stats-icon">
+                                    <i class="bi bi-collection-play"></i>
+                                </div>
+                                <div class="counter-container">
+                                    <span class="counter-number" id="simulationCounter">0</span>
+                                    <span class="counter-plus">+</span>
+                                </div>
+                                <p class="stats-label">Simulasi Tersedia</p>
+                                <div class="stats-description">
+                                    Dari SD hingga SMA
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tujuan Section -->
+    <section id="tujuan" class="purpose-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center fade-in">
+                    <h2 class="display-5 fw-bold mb-5 text-dark">
+                        <i class="bi bi-bullseye text-primary"></i> Tujuan ED-Share
+                    </h2>
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="feature-icon">
+                                <i class="bi bi-lightbulb-fill"></i>
+                            </div>
+                            <h5 class="fw-semibold">Pembelajaran Interaktif</h5>
+                            <p class="text-muted">Menyediakan simulasi yang membuat konsep abstrak menjadi nyata dan mudah dipahami siswa</p>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="feature-icon">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+                            <h5 class="fw-semibold">Mendukung Guru</h5>
+                            <p class="text-muted">Membantu guru Indonesia mengajar dengan lebih efektif menggunakan teknologi modern</p>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="feature-icon">
+                                <i class="bi bi-graph-up-arrow"></i>
+                            </div>
+                            <h5 class="fw-semibold">Meningkatkan Kualitas</h5>
+                            <p class="text-muted">Meningkatkan kualitas pendidikan Indonesia melalui inovasi pembelajaran digital</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Simulasi Section -->
+    <section id="simulasi" class="py-5">
+        <div class="container">
+            <div class="text-center mb-5 fade-in">
+                <h2 class="display-5 fw-bold mb-3">
+                    <i class="bi bi-collection-play gradient-icon"></i> Simulasi Pembelajaran
+                </h2>
+                <p class="lead text-muted">Jelajahi berbagai sub-materi dengan simulasi interaktif</p>
+            </div>
+            <!-- Search and Filter -->
+            <div class="row mb-5 fade-in">
+                <div class="col-lg-8 mx-auto">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-0">
+                                            <i class="bi bi-search text-muted"></i>
+                                        </span>
+                                        <input type="text" class="form-control border-0 bg-light" id="searchInput" 
+                                               placeholder="Cari simulasi... (contoh: newton, asam basa, integral)">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-select border-0 bg-light" id="categoryFilter">
+                                        <option value="">Semua Mata Pelajaran</option>
+                                        <option value="matematika">Matematika</option>
+                                        <option value="ipa">IPA</option>
+                                        <option value="bahasa">Bahasa Indonesia</option>
+                                        <option value="ips">IPS</option>
+                                        <option value="seni">Seni Budaya</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-select border-0 bg-light" id="gradeFilter">
+                                        <option value="">Semua Kelas</option>
+                                        <optgroup label="SD (Sekolah Dasar)">
+                                            <option value="1">Kelas 1 SD</option>
+                                            <option value="2">Kelas 2 SD</option>
+                                            <option value="3">Kelas 3 SD</option>
+                                            <option value="4">Kelas 4 SD</option>
+                                            <option value="5">Kelas 5 SD</option>
+                                            <option value="6">Kelas 6 SD</option>
+                                        </optgroup>
+                                        <optgroup label="SMP (Sekolah Menengah Pertama)">
+                                            <option value="7">Kelas 7 SMP</option>
+                                            <option value="8">Kelas 8 SMP</option>
+                                            <option value="9">Kelas 9 SMP</option>
+                                        </optgroup>
+                                        <optgroup label="SMA (Sekolah Menengah Atas)">
+                                            <option value="10">Kelas 10 SMA</option>
+                                            <option value="11">Kelas 11 SMA</option>
+                                            <option value="12">Kelas 12 SMA</option>
+                                        </optgroup>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <small class="text-muted">
+                                    <i class="bi bi-info-circle"></i> 
+                                    Menampilkan <span id="resultCount">0</span> simulasi
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Simulasi Grid -->
+            <div class="row g-4" id="simulationGrid"></div>
+            <!-- No Results -->
+            <div id="noResults" class="text-center py-5" style="display: none;">
+                <div class="fade-in">
+                    <i class="bi bi-search display-1 text-muted mb-3"></i>
+                    <h5 class="fw-semibold text-muted">Tidak ada simulasi yang ditemukan</h5>
+                    <p class="text-muted">Coba gunakan kata kunci lain atau pilih kategori yang berbeda</p>
+                    <button class="btn btn-primary" onclick="clearFilters()">
+                        <i class="bi bi-arrow-clockwise"></i> Reset Pencarian
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Fitur Section -->
+    <section id="fitur" class="py-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5 fade-in">
+                <h2 class="display-5 fw-bold mb-3">
+                    <i class="bi bi-stars gradient-icon"></i> Mengapa Memilih ED-Share?
+                </h2>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3 fade-in stagger-1">
+                    <div class="text-center">
+                        <i class="bi bi-device-laptop display-4 text-primary mb-3"></i>
+                        <h5 class="fw-semibold">Mudah Digunakan</h5>
+                        <p class="text-muted">Interface yang intuitif dan user-friendly untuk semua kalangan</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 fade-in stagger-2">
+                    <div class="text-center">
+                        <i class="bi bi-phone display-4 text-success mb-3"></i>
+                        <h5 class="fw-semibold">Responsif</h5>
+                        <p class="text-muted">Dapat diakses dari berbagai perangkat: laptop, tablet, dan smartphone</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 fade-in stagger-3">
+                    <div class="text-center">
+                        <i class="bi bi-download display-4 text-warning mb-3"></i>
+                        <h5 class="fw-semibold">Gratis</h5>
+                        <p class="text-muted">Semua simulasi dapat diakses secara gratis untuk kemajuan pendidikan</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 fade-in stagger-4">
+                    <div class="text-center">
+                        <i class="bi bi-arrow-clockwise display-4 text-info mb-3"></i>
+                        <h5 class="fw-semibold">Selalu Update</h5>
+                        <p class="text-muted">Simulasi baru ditambahkan secara berkala sesuai kebutuhan</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center fade-in">
+                    <h3 class="fw-bold mb-4">Bergabunglah dengan Revolusi Pembelajaran Digital!</h3>
+                    <p class="lead text-muted mb-4">Dukung pengembangan simulasi pembelajaran untuk masa depan pendidikan Indonesia yang lebih baik</p>
+                    <div class="d-flex gap-3 justify-content-center flex-wrap">
+                        <button class="btn btn-success btn-lg px-5" data-bs-toggle="modal" data-bs-target="#donationModal">
+                            <i class="bi bi-heart-fill"></i> Dukung ED-Share
+                        </button>
+                        <button class="btn btn-primary btn-lg px-5" data-bs-toggle="modal" data-bs-target="#requestModal">
+                            <i class="bi bi-plus-circle-fill"></i> Request Simulasi Baru
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <h5 class="fw-bold mb-3">
+                        <i class="bi bi-mortarboard-fill"></i> ED-Share
+                    </h5>
+                    <p class="text-light">Platform simulasi pembelajaran interaktif untuk memajukan pendidikan Indonesia melalui teknologi modern dan inovatif.</p>
+                </div>
+                <div class="col-lg-6 text-lg-end">
+                    <p class="mb-2">Hubungi Kami:</p>
+                    <p class="text-light">
+                        <i class="bi bi-envelope"></i> info@ed-share.id<br>
+                        <i class="bi bi-whatsapp"></i> +62 812-3456-7890
+                    </p>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2024 ED-Share. Dibuat dengan <i class="bi bi-heart-fill text-danger"></i> untuk pendidikan Indonesia</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Donation Modal -->
+    <div class="modal fade" id="donationModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-heart-fill text-danger"></i> Dukung ED-Share
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="text-muted mb-4">Bantu kami mengembangkan lebih banyak simulasi pembelajaran untuk kemajuan pendidikan Indonesia</p>
+                    <div class="qr-placeholder mb-4">
+                        <div>
+                            <i class="bi bi-qr-code display-4 text-muted"></i>
+                            <p class="text-muted mt-2 mb-0">QR Code QRIS<br><small>akan ditampilkan di sini</small></p>
+                        </div>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> Scan QR Code dengan aplikasi pembayaran digital Anda (GoPay, OVO, DANA, dll)
+                    </div>
+                    <p class="small text-muted">Setiap donasi Anda akan membantu pengembangan simulasi pembelajaran yang lebih baik dan beragam</p>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Request Modal -->
+    <div class="modal fade" id="requestModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-plus-circle-fill text-primary"></i> Request Simulasi Baru
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="requestForm">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Nama Lengkap</label>
+                            <input type="text" class="form-control" id="nama" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Mata Pelajaran</label>
+                            <select class="form-select" id="mapel" required>
+                                <option value="">Pilih Mata Pelajaran</option>
+                                <option value="Matematika">Matematika</option>
+                                <option value="Fisika">Fisika</option>
+                                <option value="Kimia">Kimia</option>
+                                <option value="Biologi">Biologi</option>
+                                <option value="Geografi">Geografi</option>
+                                <option value="Sejarah">Sejarah</option>
+                                <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                                <option value="Bahasa Inggris">Bahasa Inggris</option>
+                                <option value="Ekonomi">Ekonomi</option>
+                                <option value="Lainnya">Lainnya</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Topik Simulasi</label>
+                            <input type="text" class="form-control" id="topik" placeholder="Contoh: Hukum Newton, Reaksi Asam Basa, Sistem Pernapasan" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Deskripsi Detail</label>
+                            <textarea class="form-control" id="deskripsi" rows="4" placeholder="Jelaskan simulasi yang Anda inginkan secara detail, termasuk fitur-fitur yang diharapkan..." required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Nomor WhatsApp</label>
+                            <input type="tel" class="form-control" id="whatsapp" placeholder="08xxxxxxxxxx" required>
+                        </div>
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle"></i> Request akan dikirim melalui WhatsApp untuk follow-up lebih lanjut
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" form="requestForm" class="btn btn-primary">
+                        <i class="bi bi-send"></i> Kirim Request
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="simulasi.js"></script>
+    <!-- Script untuk form request WhatsApp dan counter -->
+    <script>
+        // Form submission request WhatsApp
+        document.getElementById('requestForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nama = document.getElementById('nama').value;
+            const mapel = document.getElementById('mapel').value;
+            const topik = document.getElementById('topik').value;
+            const deskripsi = document.getElementById('deskripsi').value;
+            const whatsapp = document.getElementById('whatsapp').value;
+            const message = `*REQUEST SIMULASI ED-SHARE*\n\n` +
+                            `👤 Nama: ${nama}\n` +
+                            `📚 Mata Pelajaran: ${mapel}\n` +
+                            `🎯 Topik: ${topik}\n` +
+                            `📝 Deskripsi: ${deskripsi}\n` +
+                            `📱 WhatsApp: ${whatsapp}\n\n` +
+                            `Terima kasih telah menggunakan ED-Share! 🎓`;
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/6281234567890?text=${encodedMessage}`;
+            window.open(whatsappUrl, '_blank');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('requestModal'));
+            modal.hide();
+            this.reset();
+            setTimeout(() => {
+                alert('Request berhasil dikirim! Silakan cek WhatsApp Anda untuk melanjutkan komunikasi.');
+            }, 500);
+        });
+
+        // Animated Counter for Simulation Count
+        function animateCounter() {
+            const counter = document.getElementById('simulationCounter');
+            // Dapatkan jumlah simulasi dari JSON
+            fetch('simulasi-data.json').then(res => res.json()).then(data => {
+                const targetNumber = data.length;
+                let currentNumber = 0;
+                const duration = 2000;
+                const increment = targetNumber / (duration / 50);
+                const spinDuration = 1000;
+                const spinInterval = setInterval(() => {
+                    const randomNum = Math.floor(Math.random() * 99) + 1;
+                    counter.textContent = randomNum;
+                    counter.classList.add('counter-animate');
+                    setTimeout(() => { counter.classList.remove('counter-animate'); }, 100);
+                }, 100);
+                setTimeout(() => {
+                    clearInterval(spinInterval);
+                    const countInterval = setInterval(() => {
+                        currentNumber += increment;
+                        if (currentNumber >= targetNumber) {
+                            counter.textContent = targetNumber;
+                            clearInterval(countInterval);
+                            counter.style.transform = 'scale(1.1)';
+                            setTimeout(() => { counter.style.transform = 'scale(1)'; }, 200);
+                        } else {
+                            counter.textContent = Math.floor(currentNumber);
+                        }
+                        counter.classList.add('counter-animate');
+                        setTimeout(() => { counter.classList.remove('counter-animate'); }, 100);
+                    }, 50);
+                }, spinDuration);
+            });
+        }
+        window.addEventListener('load', () => { setTimeout(animateCounter, 500); });
+        // Juga trigger saat stats card in-view
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counter = entry.target.querySelector('#simulationCounter');
+                    if (counter && counter.textContent === '0') {
+                        animateCounter();
+                    }
+                }
+            });
+        }, { threshold: 0.5 });
+        const statsCard = document.querySelector('.stats-card-new');
+        if (statsCard) { statsObserver.observe(statsCard); }
+    </script>
+</body>
+</html>
