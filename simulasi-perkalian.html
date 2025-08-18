@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Belajar Tabel Perkalian Interaktif</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --glass: rgba(255,255,255,0.14);
+      --glass-strong: rgba(255,255,255,0.22);
+    }
+    body { font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    .glass {
+      background: #0f172a; /* solid, tidak transparan */
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    }
+    .btn {
+      transition: transform .08s ease, box-shadow .2s ease, background .2s ease, color .2s ease;
+    }
+    .btn:active { transform: translateY(1px) scale(0.99); }
+    .bounce {
+      animation: bounceIn .5s ease;
+    }
+    @keyframes bounceIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      60% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+    .shake { animation: shake .25s linear; }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+    .confetti {
+      position: fixed; left: 0; top: 0; width: 100%; height: 0; pointer-events: none; z-index: 50;
+    }
+    .chip { transition: transform .08s ease, background .2s ease; }
+    .chip:active { transform: scale(0.98); }
+    .cell {
+      transition: background .15s ease, transform .08s ease, color .15s ease;
+      user-select: none;
+    }
+    .cell:active { transform: scale(0.98); }
+/* Gaya slider agar jelas dan mudah digunakan */
+input[type=range]::-webkit-slider-runnable-track{height:8px;background:#64748b;border-radius:999px}
+input[type=range]::-webkit-slider-thumb{appearance:none;margin-top:-6px;width:20px;height:20px;border-radius:999px;background:#22d3ee;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+input[type=range]::-moz-range-track{height:8px;background:#64748b;border-radius:999px}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border:0;border-radius:999px;background:#22d3ee;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+/* vertical slider helper - paksa benar-benar vertikal di semua browser */
+.vertical-slider{
+  writing-mode: vertical-rl; /* Firefox/Edge */
+  -webkit-appearance: slider-vertical; /* WebKit */
+  appearance: slider-vertical;
+  width: 0.75rem; /* konsisten lebar */
+  height: 100%;
+  display: block;
+}
+@supports not (-webkit-appearance: slider-vertical){
+  .vertical-slider{writing-mode: horizontal-tb; transform: rotate(-90deg); transform-origin: center;}
+}
+    .timer-bar {
+      transition: width .2s linear;
+    }
+    .tab-active {
+      background: linear-gradient(135deg, #7c3aed, #2563eb);
+      color: white;
+      box-shadow: 0 10px 25px rgba(124,58,237,0.4);
+    }
+    .radial {
+      background:
+        radial-gradient(1200px 800px at 10% -20%, rgba(255,255,255,0.18), transparent 40%),
+        radial-gradient(1000px 700px at 100% 0%, rgba(255,255,255,0.12), transparent 45%);
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-fuchsia-600 via-indigo-600 to-sky-500 text-white radial">
+  <div class="confetti" id="confetti"></div>
+
+  <header class="max-w-6xl mx-auto px-6 pt-10">
+    <div class="glass rounded-2xl p-6 md:p-8 shadow-2xl">
+      <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-rose-400 flex items-center justify-center text-2xl shadow-lg">✖️</div>
+          <div>
+            <h1 class="text-2xl md:text-3xl font-bold leading-tight">Belajar Tabel Perkalian</h1>
+            <p class="opacity-90">Interaktif, menyenangkan, dan siap membantu kamu jadi jago matematika!</p>
+          </div>
+        </div>
+        <div class="md:ml-auto flex items-center gap-3 w-full md:w-auto">
+          <div class="glass rounded-xl px-4 py-2 text-sm">
+            Skor: <span id="score" class="font-semibold">0</span>
+          </div>
+          <div class="glass rounded-xl px-4 py-2 text-sm">
+            Rantai Benar: <span id="streak" class="font-semibold">0</span> 🔥
+          </div>
+          <button id="resetAll" class="btn bg-white/90 text-indigo-700 hover:bg-white font-semibold rounded-xl px-4 py-2 shadow-lg">Reset</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-6 py-8 space-y-6">
+    <!-- Controls -->
+    <section class="glass rounded-2xl p-6 md:p-8">
+      <div class="grid md:grid-cols-3 gap-6">
+        <div>
+          <label class="block text-sm opacity-90 mb-2">Pilih Rentang Angka</label>
+          <div class="flex items-center gap-3">
+            <select id="minNum" class="glass w-full rounded-xl px-4 py-2 text-white">
+              <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+              <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+              <option value="7">7</option><option value="8">8</option><option value="9">9</option>
+              <option value="10">10</option>
+            </select>
+            <span class="opacity-80">sampai</span>
+            <select id="maxNum" class="glass w-full rounded-xl px-4 py-2 text-white">
+              <option value="5">5</option><option value="6">6</option><option value="7">7</option>
+              <option value="8">8</option><option value="9">9</option><option value="10" selected>10</option>
+              <option value="11">11</option><option value="12">12</option>
+            </select>
+          </div>
+          <p class="text-xs opacity-80 mt-2">Mengatur angka yang dipakai di semua mode.</p>
+        </div>
+
+        <div>
+          <label class="block text-sm opacity-90 mb-2">Tingkat Kesulitan</label>
+          <div class="flex gap-2">
+            <button data-diff="mudah" class="btn chip glass rounded-xl px-4 py-2 text-sm hover:bg-white/20 diff-btn tab-active">Mudah</button>
+            <button data-diff="sedang" class="btn chip glass rounded-xl px-4 py-2 text-sm hover:bg-white/20 diff-btn">Sedang</button>
+            <button data-diff="sulit" class="btn chip glass rounded-xl px-4 py-2 text-sm hover:bg-white/20 diff-btn">Sulit</button>
+          </div>
+          <p class="text-xs opacity-80 mt-2">Mudah: pilihan ganda, Sedang: isian, Sulit: waktu lebih singkat.</p>
+        </div>
+
+        <div>
+          <label class="block text-sm opacity-90 mb-2">Mode</label>
+          <div class="grid grid-cols-3 gap-2">
+            <button data-tab="belajar" class="btn glass rounded-xl px-4 py-2 hover:bg-white/20 tab-btn tab-active">Belajar</button>
+            <button data-tab="kuis" class="btn glass rounded-xl px-4 py-2 hover:bg-white/20 tab-btn">Kuis</button>
+            <button data-tab="tantangan" class="btn glass rounded-xl px-4 py-2 hover:bg-white/20 tab-btn">Tantangan</button>
+          </div>
+          <p class="text-xs opacity-80 mt-2">Pilih cara belajar sesuai mood kamu.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Panels -->
+    <section id="panel-belajar" class="glass rounded-2xl p-6 md:p-8 space-y-6">
+      <div class="flex flex-col lg:flex-row gap-6">
+        <div class="lg:w-1/3">
+          <h2 class="text-xl font-semibold mb-2">Mode Belajar</h2>
+          <p class="opacity-90 mb-4">Pilih baris/kolom untuk sorot. Ketuk sel untuk membuka hasil. Cocok untuk menghafal pola.</p>
+
+          <div class="space-y-4">
+            <div class="text-xs opacity-80">
+              Kontrol "Sorot Baris" dipindahkan ke kiri tabel (vertikal).
+            </div>
+            <div class="text-xs opacity-80">
+              Kontrol "Sorot Kolom" dipindahkan ke atas tabel (horizontal).
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <button id="revealAll" class="btn bg-emerald-400/90 hover:bg-emerald-400 text-slate-900 font-semibold rounded-xl px-4 py-2 shadow-lg">Buka Semua</button>
+              <button id="hideAll" class="btn bg-rose-400/90 hover:bg-rose-400 text-slate-900 font-semibold rounded-xl px-4 py-2 shadow-lg">Tutup Semua</button>
+            </div>
+
+            <div class="glass rounded-xl p-4">
+              <div class="text-sm opacity-90 mb-2"><span id="tipText">Tip: 6 × 7 bisa diingat dari 5 × 7 (35) + 7 = 42.</span></div>
+              <div class="flex gap-2">
+                <button id="randomTip" class="btn chip glass rounded-lg px-3 py-1 text-xs hover:bg-white/20">Tip Acak ✨</button>
+                <button id="allTipsBtn" class="btn chip bg-white/90 text-indigo-700 hover:bg-white rounded-lg px-3 py-1 text-xs">Lihat Semua Tip 📚</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:w-2/3">
+          <div class="flex gap-3 items-stretch">
+            <!-- Slider Baris Vertikal di kiri tabel -->
+            <div class="flex-shrink-0 flex flex-col items-center justify-start pt-1">
+              <div id="rowSliderWrap" class="w-8" style="height: 100%; margin-top: 50px;">
+                <input id="highlightRow" type="range" min="0" value="0" class="vertical-slider appearance-none bg-slate-700/70 rounded-lg w-8" style="height: 100%;">
+              </div>
+              <div class="text-[10px] mt-2 opacity-80">Baris</div>
+            </div>
+            <div class="flex-1">
+              <!-- Slider Kolom di atas tabel -->
+              <div class="mb-3">
+                <input id="highlightCol" type="range" min="0" value="0" class="w-full appearance-none h-2 bg-slate-700/70 rounded-lg">
+                <div class="text-[10px] mt-1 opacity-80 text-center">Kolom</div>
+              </div>
+              <div id="tableWrap" class="relative overflow-auto rounded-xl border border-white/20">
+                <table id="learnTable" class="w-full min-w-[560px]">
+                  <!-- Generated by JS -->
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="panel-kuis" class="hidden glass rounded-2xl p-6 md:p-8 space-y-6">
+      <div class="flex flex-col lg:flex-row gap-6">
+        <div class="lg:w-2/3">
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-semibold">Kuis Cepat</h2>
+            <div class="text-sm glass rounded-xl px-3 py-1">Nyawa: <span id="lives" class="font-semibold">3</span> ❤️</div>
+          </div>
+
+          <div class="glass rounded-2xl p-6 mt-4">
+            <div id="question" class="text-4xl md:text-5xl font-bold text-center mb-4">3 × 4 = ?</div>
+
+            <div id="choices" class="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <!-- Choice buttons -->
+            </div>
+
+            <div class="mt-5 flex items-center gap-3 justify-center">
+              <input id="answerInput" type="number" placeholder="Ketik jawaban" class="glass rounded-xl px-4 py-2 text-white w-44 text-center" />
+              <button id="submitAnswer" class="btn bg-white/90 hover:bg-white text-indigo-700 font-semibold rounded-xl px-4 py-2 shadow-lg">Jawab</button>
+            </div>
+
+            <div id="feedback" class="text-center mt-3 font-semibold min-h-[1.5rem]"></div>
+          </div>
+        </div>
+
+        <div class="lg:w-1/3 space-y-4">
+          <div class="glass rounded-xl p-4">
+            <div class="text-sm opacity-90 mb-2">Target</div>
+            <div class="flex items-center gap-2">
+              <button id="decreaseTarget" class="btn chip glass rounded-lg px-3 py-1">-</button>
+              <span id="targetCount" class="text-lg font-semibold">10</span>
+              <button id="increaseTarget" class="btn chip glass rounded-lg px-3 py-1">+</button>
+              <span class="opacity-80 text-sm">soal</span>
+            </div>
+          </div>
+
+          <div class="glass rounded-xl p-4">
+            <div class="text-sm opacity-90 mb-2">Kemajuan</div>
+            <div class="w-full bg-white/10 rounded-lg overflow-hidden h-2">
+              <div id="progressBar" class="h-2 bg-gradient-to-r from-emerald-400 to-cyan-400 w-0"></div>
+            </div>
+            <div class="text-xs opacity-80 mt-2">Selesaikan semua target untuk lencana 🏅</div>
+          </div>
+
+          <button id="restartQuiz" class="btn w-full bg-indigo-400/90 hover:bg-indigo-400 text-slate-900 font-semibold rounded-xl px-4 py-3 shadow-lg">Mulai Ulang Kuis</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="panel-tantangan" class="hidden glass rounded-2xl p-6 md:p-8 space-y-6">
+      <div class="flex flex-col lg:flex-row gap-6">
+        <div class="lg:w-2/3">
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-semibold">Tantangan Waktu</h2>
+            <div class="flex items-center gap-2">
+              <div class="w-40 bg-white/10 rounded-full overflow-hidden h-2">
+                <div id="timeBar" class="timer-bar h-2 bg-gradient-to-r from-rose-300 to-amber-200 w-full"></div>
+              </div>
+              <div class="glass rounded-xl px-3 py-1 text-sm">⏱️ <span id="timeLeft">60</span>d</div>
+            </div>
+          </div>
+
+          <div class="glass rounded-2xl p-6 mt-4">
+            <div id="challengeQuestion" class="text-4xl md:text-5xl font-bold text-center mb-4">8 × 9 = ?</div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="challengeChoices"></div>
+
+            <div class="mt-5 flex items-center gap-3 justify-center">
+              <input id="challengeInput" type="number" placeholder="Ketik jawaban" class="glass rounded-xl px-4 py-2 text-white w-44 text-center" />
+              <button id="challengeSubmit" class="btn bg-white/90 hover:bg-white text-indigo-700 font-semibold rounded-xl px-4 py-2 shadow-lg">Jawab</button>
+            </div>
+
+            <div id="challengeFeedback" class="text-center mt-3 font-semibold min-h-[1.5rem]"></div>
+          </div>
+        </div>
+
+        <div class="lg:w-1/3 space-y-4">
+          <div class="glass rounded-xl p-4">
+            <div class="text-sm opacity-90 mb-2">Durasi</div>
+            <div class="flex items-center gap-2">
+              <button data-time="30" class="btn chip glass rounded-lg px-3 py-1 time-btn">30d</button>
+              <button data-time="60" class="btn chip glass rounded-lg px-3 py-1 time-btn tab-active">60d</button>
+              <button data-time="90" class="btn chip glass rounded-lg px-3 py-1 time-btn">90d</button>
+            </div>
+            <div class="text-xs opacity-80 mt-2">Jawab sebanyak mungkin. Jawaban benar berturut-turut memberi bonus!</div>
+          </div>
+          <button id="restartChallenge" class="btn w-full bg-amber-300/95 hover:bg-amber-300 text-slate-900 font-semibold rounded-xl px-4 py-3 shadow-lg">Mulai Tantangan</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal Tips -->
+  <div id="tipsModal" class="fixed inset-0 hidden items-center justify-center z-50">
+    <div class="absolute inset-0 bg-black/60"></div>
+    <div class="relative glass rounded-2xl p-6 md:p-8 w-[min(92vw,800px)] max-h-[80vh] overflow-y-auto">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold">Kumpulan Tip Belajar</h3>
+        <button id="closeTips" class="btn chip bg-white/90 text-indigo-700 hover:bg-white rounded-lg px-3 py-1 text-xs">Tutup</button>
+      </div>
+      <div class="space-y-4 text-sm leading-relaxed" id="tipsList"></div>
+    </div>
+  </div>
+
+  <footer class="max-w-6xl mx-auto px-6 pb-10">
+    <div class="glass rounded-2xl p-6 md:p-8 text-center text-sm opacity-90">
+      Dibuat dengan semangat belajar ❤️ oleh Canva Code. Coba capai rantai 10 jawaban benar untuk konfeti spesial! 🎉
+    </div>
+  </footer>
+
+  <script>
+    // State
+    const state = {
+      min: 1, max: 10,
+      difficulty: 'mudah', // mudah | sedang | sulit
+      score: 0, streak: 0,
+      // Quiz
+      target: 10, done: 0, lives: 3, current: null,
+      // Challenge
+      timeTotal: 60, timeLeft: 60, timer: null, cCurrent: null
+    };
+
+    // Elements
+    const minNum = document.getElementById('minNum');
+    const maxNum = document.getElementById('maxNum');
+    const diffBtns = [...document.querySelectorAll('.diff-btn')];
+    const tabBtns = [...document.querySelectorAll('.tab-btn')];
+
+    const scoreEl = document.getElementById('score');
+    const streakEl = document.getElementById('streak');
+    const resetAll = document.getElementById('resetAll');
+
+    // Learn mode
+    const tableEl = document.getElementById('learnTable');
+    const tableWrap = document.getElementById('tableWrap');
+    const highlightRow = document.getElementById('highlightRow');
+    const highlightCol = document.getElementById('highlightCol');
+    const revealAll = document.getElementById('revealAll');
+    const hideAll = document.getElementById('hideAll');
+    const randomTip = document.getElementById('randomTip');
+    const tipText = document.getElementById('tipText');
+    const allTipsBtn = document.getElementById('allTipsBtn');
+    const tipsModal = document.getElementById('tipsModal');
+    const tipsList = document.getElementById('tipsList');
+    const closeTips = document.getElementById('closeTips');
+
+    // Quiz
+    const panelBelajar = document.getElementById('panel-belajar');
+    const panelKuis = document.getElementById('panel-kuis');
+    const panelTantangan = document.getElementById('panel-tantangan');
+
+    const questionEl = document.getElementById('question');
+    const choicesEl = document.getElementById('choices');
+    const answerInput = document.getElementById('answerInput');
+    const submitAnswer = document.getElementById('submitAnswer');
+    const feedbackEl = document.getElementById('feedback');
+    const livesEl = document.getElementById('lives');
+    const targetCount = document.getElementById('targetCount');
+    const progressBar = document.getElementById('progressBar');
+    const restartQuiz = document.getElementById('restartQuiz');
+    const incTarget = document.getElementById('increaseTarget');
+    const decTarget = document.getElementById('decreaseTarget');
+
+    // Challenge
+    const timeBtns = [...document.querySelectorAll('.time-btn')];
+    const timeBar = document.getElementById('timeBar');
+    const timeLeftEl = document.getElementById('timeLeft');
+    const challengeQuestion = document.getElementById('challengeQuestion');
+    const challengeChoices = document.getElementById('challengeChoices');
+    const challengeInput = document.getElementById('challengeInput');
+    const challengeSubmit = document.getElementById('challengeSubmit');
+    const challengeFeedback = document.getElementById('challengeFeedback');
+    const restartChallenge = document.getElementById('restartChallenge');
+
+    const confetti = document.getElementById('confetti');
+
+    // Utils
+    const rand = (a,b)=> Math.floor(Math.random()*(b-a+1))+a;
+    const shuffle = arr => arr.sort(()=>Math.random()-0.5);
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+    function updateRange() {
+      state.min = parseInt(minNum.value,10);
+      state.max = parseInt(maxNum.value,10);
+      if (state.max < state.min) {
+        // Swap if invalid
+        const t = state.max; state.max = state.min; state.min = t;
+        minNum.value = state.min; maxNum.value = state.max;
+      }
+      highlightRow.max = state.max - state.min + 1;
+      highlightCol.max = state.max - state.min + 1;
+      buildLearnTable();
+      resetQuiz(false);
+      resetChallenge(false);
+    }
+
+    function setDifficulty(diff) {
+      state.difficulty = diff;
+      diffBtns.forEach(b=> b.classList.toggle('tab-active', b.dataset.diff===diff));
+      resetQuiz(false);
+      resetChallenge(false);
+    }
+
+    function setTab(tab) {
+      tabBtns.forEach(b=> b.classList.toggle('tab-active', b.dataset.tab===tab));
+      panelBelajar.classList.toggle('hidden', tab!=='belajar');
+      panelKuis.classList.toggle('hidden', tab!=='kuis');
+      panelTantangan.classList.toggle('hidden', tab!=='tantangan');
+    }
+
+    function updateHUD() {
+      scoreEl.textContent = state.score;
+      streakEl.textContent = state.streak;
+      livesEl.textContent = state.lives;
+      targetCount.textContent = state.target;
+      const pct = state.target ? Math.round((state.done/state.target)*100) : 0;
+      progressBar.style.width = pct + '%';
+    }
+
+    // Learn table
+    function buildLearnTable() {
+      const min = state.min, max = state.max;
+      let html = '';
+      // Header row
+      html += '<thead class="bg-white/10"><tr>';
+      html += '<th class="p-3 text-left text-sm font-semibold">×</th>';
+      for (let j=min;j<=max;j++) {
+        html += `<th class="p-3 text-center text-sm font-semibold">${j}</th>`;
+      }
+      html += '</tr></thead>';
+      // Body
+      html += '<tbody>';
+      for (let i=min;i<=max;i++) {
+        html += '<tr>';
+        html += `<th class="p-3 text-left font-semibold bg-white/10">${i}</th>`;
+        for (let j=min;j<=max;j++) {
+          const id = `c-${i}-${j}`;
+          html += `<td data-i="${i}" data-j="${j}" id="${id}" class="cell p-3 text-center bg-white/5 rounded-md m-1">
+            <span class="opacity-70 answer hidden">${i*j}</span>
+            <span class="prompt">?</span>
+          </td>`;
+        }
+        html += '</tr>';
+      }
+      html += '</tbody>';
+      tableEl.innerHTML = html;
+      applyHighlights();
+      tableEl.querySelectorAll('.cell').forEach(td=>{
+        td.addEventListener('click', ()=>{
+          const ans = td.querySelector('.answer');
+          const prm = td.querySelector('.prompt');
+          const revealed = !ans.classList.contains('hidden');
+          if (revealed) {
+            ans.classList.add('hidden');
+            prm.classList.remove('hidden');
+            td.classList.remove('bg-emerald-400/30','text-slate-900');
+          } else {
+            ans.classList.remove('hidden');
+            prm.classList.add('hidden');
+            td.classList.add('bg-emerald-400/30','text-slate-900');
+          }
+        });
+        td.addEventListener('mouseenter', ()=> td.classList.add('bg-white/10'));
+        td.addEventListener('mouseleave', ()=> td.classList.remove('bg-white/10'));
+      });
+    }
+
+    function applyHighlights() {
+      const r = parseInt(highlightRow.value,10);
+      const c = parseInt(highlightCol.value,10);
+      const min = state.min;
+      const max = state.max;
+      const rIndex = r===0 ? null : (min + r - 1);
+      const cIndex = c===0 ? null : (min + c - 1);
+
+      tableEl.querySelectorAll('td').forEach(td=>{
+        td.classList.remove('bg-indigo-400/30','bg-cyan-400/30');
+        const i = parseInt(td.dataset.i,10);
+        const j = parseInt(td.dataset.j,10);
+        if (rIndex !== null && i===rIndex) td.classList.add('bg-indigo-400/30');
+        if (cIndex !== null && j===cIndex) td.classList.add('bg-cyan-400/30');
+      });
+    }
+
+    function revealAllCells(show=true) {
+      tableEl.querySelectorAll('.cell').forEach(td=>{
+        const ans = td.querySelector('.answer');
+        const prm = td.querySelector('.prompt');
+        if (show) {
+          ans.classList.remove('hidden');
+          prm.classList.add('hidden');
+          td.classList.add('bg-emerald-400/30','text-slate-900');
+        } else {
+          ans.classList.add('hidden');
+          prm.classList.remove('hidden');
+          td.classList.remove('bg-emerald-400/30','text-slate-900');
+        }
+      });
+    }
+
+    // Tips
+    const tips = [
+      'Gunakan pola: 9 × n = 10n - n.',
+      '5 × n selalu berakhir 0 atau 5.',
+      '6 × 4 = 24. Ingat: 2-4!',
+      '8 × 7 = 56, sering dihafal lewat 7 × 8.',
+      'Trik jari untuk 9 × n itu nyata! (lihat penjelasan di daftar tip)',
+      'Angka komutatif: a × b = b × a, jadi hafalkan separuh tabel.',
+      'Kali dengan 11: 11 × 2–9 mudah: gandakan dan sisipkan (mis. 11×23 = 2(2+3)3 = 253).',
+      'Kelipatan 4: angka genap dan dua digit terakhir habis dibagi 4.',
+      '9 × n: jumlah digit hasil selalu 9 atau turunannya (18→1+8=9).',
+      '5 × n: jika n genap, hasil berakhir 0; jika ganjil, berakhir 5.',
+      '10 × n: cukup tambahkan 0 di belakang.',
+      'Trik 12×: 12×n = 10n + 2n.',
+      'Pecah jadi mudah: 7×6 = (7×5)+(7×1).',
+      'Kuasai persegi: 6×6=36, 7×7=49, 8×8=64 untuk patokan.',
+      'Urutan berpola: baris dan kolom di tabel naik dengan selisih tetap.',
+    ];
+
+    const detailedTips = [
+      {title:'Trik jari 9 × n', content:`Letakkan kedua tangan. Untuk 9×n (1–10): tekuk jari ke-n dari kiri. Jumlah jari di kiri adalah puluhan, di kanan adalah satuan. Contoh 9×7: tekuk jari ke-7; kiri ada 6 (puluhan=6→60), kanan ada 3 (satuan=3) jadi 63.`},
+      {title:'Pola 9 turun satu-naik satu', content:`Baris 9 membentuk pola: puluhan naik satu-satu (0,1,2,3...), satuan turun (9,8,7...). Contoh: 9×4=36, 9×5=45.`},
+      {title:'Komutatif mempercepat hafalan', content:`Karena a×b = b×a, kamu cukup hafal segitiga atas tabel. Misal hafal 7×8 otomatis tahu 8×7.`},
+      {title:'Dekomp posisi', content:`Ubah jadi puluhan + satuan: 7×12 = 7×10 + 7×2 = 70 + 14 = 84.`},
+      {title:'Persegi tetangga', content:`(n+1)^2 = n^2 + 2n + 1. Jika hafal 8×8=64, maka 9×9=64+16+1=81.`},
+      {title:'Gandakan dan tambah setengah (×15)', content:`15×n = (10×n) + (5×n) = 10n + setengah dari 10n. Misal 15×8=80+40=120.`},
+      {title:'Kelipatan 25', content:`25×n = 100×n/4, jadi cukup bagi 4 lalu tambahkan dua nol. Misal 25×12 = 300.`},
+      {title:'Gunakan orientasi baris/kolom', content:`Sorot baris atau kolom yang sama untuk melihat pola berulang, membantu hafalan.`},
+    ];
+
+    // Quiz mechanics
+    function newQuestion() {
+      const a = rand(state.min, state.max);
+      const b = rand(state.min, state.max);
+      state.current = {a,b,ans:a*b};
+      questionEl.textContent = `${a} × ${b} = ?`;
+      feedbackEl.textContent = '';
+      const isEasy = state.difficulty==='mudah';
+      const isHard = state.difficulty==='sulit';
+
+      // Generate choices for easy & also display for others
+      const options = new Set([a*b]);
+      while (options.size < 4) {
+        const noise = rand(state.min, state.max) * rand(state.min, state.max);
+        if (noise!==a*b) options.add(noise);
+      }
+      const arr = shuffle([...options]);
+
+      choicesEl.innerHTML = arr.map(n=>`
+        <button class="btn chip glass rounded-xl px-4 py-3 text-lg hover:bg-white/20" data-choice="${n}">${n}</button>
+      `).join('');
+
+      // Input visibility based on difficulty
+      answerInput.value = '';
+      answerInput.placeholder = state.difficulty==='mudah' ? 'Atau pilih di atas' : 'Ketik jawaban';
+      choicesEl.parentElement.classList.toggle('hidden', state.difficulty==='sedang' || state.difficulty==='sulit');
+
+      if (isHard) {
+        // Subtle prompt to be quick
+        feedbackEl.innerHTML = 'Mode Sulit aktif — coba jawab cepat!';
+      }
+
+      // Bind choice clicks
+      choicesEl.querySelectorAll('button').forEach(b=>{
+        b.addEventListener('click', ()=>{
+          checkAnswer(parseInt(b.dataset.choice,10), b);
+        });
+      });
+    }
+
+    function checkAnswer(value, btnEl=null, isChallenge=false) {
+      const cur = isChallenge ? state.cCurrent : state.current;
+      const correct = cur && value === cur.ans;
+
+      const showConfetti = (amount=40)=>{
+        for(let i=0;i<amount;i++){
+          const piece = document.createElement('div');
+          piece.textContent = ['🎉','✨','🎊','🌟','🟡','🔵','🟣'][rand(0,6)];
+          piece.style.position='absolute';
+          piece.style.left = rand(5,95)+'%';
+          piece.style.top = '0';
+          piece.style.transform = `translateY(0) rotate(${rand(-30,30)}deg)`;
+          piece.style.animation = `fall ${rand(1200,2000)}ms ease-out forwards`;
+          piece.style.fontSize = rand(12,22)+'px';
+          confetti.appendChild(piece);
+          setTimeout(()=> piece.remove(), 2200);
+        }
+      };
+      // add keyframes only once
+      if (!document.getElementById('fallKey')) {
+        const style = document.createElement('style');
+        style.id = 'fallKey';
+        style.textContent = `
+        @keyframes fall {
+          to { transform: translateY(90vh) rotate(360deg); opacity: 0.9; }
+        }`;
+        document.head.appendChild(style);
+      }
+
+      if (correct) {
+        state.score += 5;
+        state.streak += 1;
+        if (!isChallenge) {
+          state.done = clamp(state.done+1, 0, state.target);
+          if (btnEl) btnEl.classList.add('bg-emerald-400/60','text-slate-900');
+        }
+        feedback(isChallenge ? challengeFeedback : feedbackEl, true);
+        if (state.streak>0 && state.streak%10===0) showConfetti(60);
+      } else {
+        state.streak = 0;
+        if (!isChallenge) state.lives = Math.max(0, state.lives-1);
+        feedback(isChallenge ? challengeFeedback : feedbackEl, false, `Jawaban yang benar: ${cur.ans}`);
+        if (btnEl) btnEl.classList.add('bg-rose-400/60','text-slate-900','shake');
+        setTimeout(()=> btnEl && btnEl.classList.remove('shake'), 300);
+      }
+
+      updateHUD();
+
+      if (isChallenge) {
+        newChallengeQ();
+        return;
+      }
+
+      // End conditions for quiz
+      if (state.lives === 0) {
+        endQuiz('Kamu kehabisan nyawa. Ayo coba lagi!');
+        return;
+      }
+      if (state.done >= state.target) {
+        endQuiz('Hebat! Target selesai! 🏅');
+        return;
+      }
+      newQuestion();
+    }
+
+    function feedback(el, ok, extra='') {
+      el.textContent = ok ? 'Benar! Mantap! ✅' + (extra? ' '+extra:'') : 'Belum tepat. Coba lagi! ❌' + (extra? ' '+extra:'');
+      el.classList.remove('text-emerald-300','text-rose-300');
+      el.classList.add(ok? 'text-emerald-300':'text-rose-300');
+      el.classList.add('bounce');
+      setTimeout(()=> el.classList.remove('bounce'), 400);
+    }
+
+    function resetQuiz(refreshQuestion=true) {
+      state.lives = 3;
+      state.done = 0;
+      updateHUD();
+      if (refreshQuestion) newQuestion();
+    }
+
+    function endQuiz(msg) {
+      feedbackEl.textContent = msg;
+      feedbackEl.classList.add('text-amber-200');
+    }
+
+    // Challenge mechanics
+    function newChallengeQ() {
+      const a = rand(state.min, state.max);
+      const b = rand(state.min, state.max);
+      state.cCurrent = {a,b,ans:a*b};
+      challengeQuestion.textContent = `${a} × ${b} = ?`;
+      challengeFeedback.textContent = '';
+
+      // Mixed mode choices always visible to tap quickly
+      const options = new Set([a*b]);
+      while (options.size < 4) options.add(rand(state.min, state.max) * rand(state.min, state.max));
+      const arr = shuffle([...options]);
+      challengeChoices.innerHTML = arr.map(n=>`
+        <button class="btn chip glass rounded-xl px-4 py-3 text-lg hover:bg-white/20" data-choice="${n}">${n}</button>
+      `).join('');
+      challengeChoices.querySelectorAll('button').forEach(b=>{
+        b.addEventListener('click', ()=> checkAnswer(parseInt(b.dataset.choice,10), b, true));
+      });
+      challengeInput.value='';
+    }
+
+    function startChallenge() {
+      stopChallenge();
+      state.timeLeft = state.timeTotal;
+      timeLeftEl.textContent = state.timeLeft;
+      timeBar.style.width = '100%';
+      newChallengeQ();
+      state.timer = setInterval(()=>{
+        state.timeLeft -= 1;
+        timeLeftEl.textContent = state.timeLeft;
+        timeBar.style.width = (state.timeLeft/state.timeTotal*100) + '%';
+        if (state.timeLeft <= 0) {
+          stopChallenge();
+          challengeFeedback.textContent = 'Waktu habis! 🎯 Coba lagi dan kalahkan skor kamu!';
+          challengeFeedback.classList.add('text-amber-200');
+        }
+      }, 1000);
+    }
+
+    function stopChallenge() {
+      if (state.timer) {
+        clearInterval(state.timer);
+        state.timer = null;
+      }
+    }
+
+    function resetChallenge(refresh=true) {
+      stopChallenge();
+      timeBar.style.width = '100%';
+      timeLeftEl.textContent = state.timeTotal;
+      if (refresh) newChallengeQ();
+    }
+
+    // Events wiring
+    minNum.addEventListener('change', updateRange);
+    maxNum.addEventListener('change', updateRange);
+    diffBtns.forEach(b=> b.addEventListener('click', ()=> setDifficulty(b.dataset.diff)));
+    tabBtns.forEach(b=> b.addEventListener('click', ()=> setTab(b.dataset.tab)));
+    resetAll.addEventListener('click', ()=>{
+      state.score = 0; state.streak = 0;
+      setDifficulty('mudah');
+      minNum.value = 1; maxNum.value = 10; updateRange();
+      setTab('belajar');
+      resetQuiz();
+      resetChallenge();
+      livesEl.textContent = state.lives;
+      feedbackEl.textContent = '';
+      challengeFeedback.textContent = '';
+    });
+
+    // Learn
+    highlightRow.addEventListener('input', applyHighlights);
+    highlightCol.addEventListener('input', applyHighlights);
+    revealAll.addEventListener('click', ()=> revealAllCells(true));
+    hideAll.addEventListener('click', ()=> revealAllCells(false));
+    randomTip.addEventListener('click', ()=>{
+      const t = tips[rand(0, tips.length-1)];
+      tipText.textContent = t;
+      const box = randomTip.closest('.glass');
+      box.classList.add('bounce');
+      setTimeout(()=> box.classList.remove('bounce'), 400);
+    });
+
+    allTipsBtn.addEventListener('click', ()=>{
+      tipsList.innerHTML = [
+        ...detailedTips.map(t=>`<div><div class='font-semibold mb-1'>${t.title}</div><div class='opacity-90'>${t.content}</div></div>`),
+        '<hr class="opacity-20">',
+        '<div class="text-xs opacity-80">Tip ringkas lainnya:</div>',
+        ...tips.map(t=>`<div class='opacity-90'>• ${t}</div>`)
+      ].join('');
+      tipsModal.classList.remove('hidden');
+      tipsModal.classList.add('flex');
+    });
+
+    closeTips.addEventListener('click', ()=>{
+      tipsModal.classList.add('hidden');
+      tipsModal.classList.remove('flex');
+    });
+    tipsModal.addEventListener('click', (e)=>{
+      if(e.target===tipsModal || e.target.classList.contains('bg-black/60')){
+        tipsModal.classList.add('hidden');
+        tipsModal.classList.remove('flex');
+      }
+    });
+
+    // Quiz
+    submitAnswer.addEventListener('click', ()=>{
+      const v = parseInt(answerInput.value,10);
+      if (!isNaN(v)) checkAnswer(v);
+    });
+    answerInput.addEventListener('keydown', (e)=>{
+      if (e.key==='Enter') {
+        const v = parseInt(answerInput.value,10);
+        if (!isNaN(v)) checkAnswer(v);
+      }
+    });
+    restartQuiz.addEventListener('click', ()=> resetQuiz(true));
+    incTarget.addEventListener('click', ()=> { state.target = clamp(state.target+1, 1, 50); updateHUD(); });
+    decTarget.addEventListener('click', ()=> { state.target = clamp(state.target-1, 1, 50); updateHUD(); });
+
+    // Challenge
+    timeBtns.forEach(b=> b.addEventListener('click', ()=>{
+      timeBtns.forEach(x=> x.classList.remove('tab-active'));
+      b.classList.add('tab-active');
+      state.timeTotal = parseInt(b.dataset.time,10);
+      resetChallenge();
+    }));
+    restartChallenge.addEventListener('click', startChallenge);
+    challengeSubmit.addEventListener('click', ()=>{
+      const v = parseInt(challengeInput.value,10);
+      if (!isNaN(v)) checkAnswer(v, null, true);
+    });
+    challengeInput.addEventListener('keydown', (e)=>{
+      if (e.key==='Enter') {
+        const v = parseInt(challengeInput.value,10);
+        if (!isNaN(v)) checkAnswer(v, null, true);
+      }
+    });
+
+    // Init
+    updateRange();
+    resetQuiz(true);
+    resetChallenge(true);
+
+    // Sesuaikan posisi dan tinggi slider baris agar sejajar tabel
+    function syncRowSlider(){
+      const wrap = document.getElementById('tableWrap');
+      const slider = document.getElementById('highlightRow');
+      const holder = document.getElementById('rowSliderWrap');
+      if(wrap && slider && holder){
+        const rect = wrap.getBoundingClientRect();
+        const h = rect.height; // tinggi visual tabel
+        holder.style.height = h + 'px';
+        slider.style.height = h + 'px';
+      }
+    }
+    window.addEventListener('resize', syncRowSlider);
+    const ro = new ResizeObserver(()=>{ requestAnimationFrame(syncRowSlider); });
+    ro.observe(document.getElementById('tableWrap'));
+    // panggil juga saat awal
+    window.addEventListener('load', syncRowSlider);
+    // panggil setelah build tabel
+    const _build = buildLearnTable;
+    buildLearnTable = function(){ _build(); syncRowSlider(); }
+
+    // Difficulty effects tweaks (harder timing)
+    const origCheckAnswer = checkAnswer;
+    // Note: We keep single source; timing effect handled in challenge mode
+  </script>
+</html>
