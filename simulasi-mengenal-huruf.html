@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Belajar Huruf A–Z Interaktif (Siap Audio)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .bounce-lite { animation: bounce-lite 0.6s ease; }
+    @keyframes bounce-lite {
+      0%,100% { transform: translateY(0); }
+      40% { transform: translateY(-6px); }
+    }
+    .pop { animation: pop 220ms ease-out; }
+    @keyframes pop {
+      0% { transform: scale(0.9); opacity: 0.3; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .shine { position: relative; overflow: hidden; }
+    .shine::after {
+      content: "";
+      position: absolute; top: -150%; left: -150%;
+      width: 200%; height: 200%; transform: rotate(25deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+      animation: shine 3s linear infinite;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 text-white">
+  <div class="max-w-6xl mx-auto px-4 py-8 md:py-12">
+    <header class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+      <div>
+        <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Belajar Huruf A–Z Interaktif</h1>
+        <p class="text-white/90 mt-1">Kenali huruf, lihat gambar, dan mainkan permainan seru!</p>
+        <p class="mt-1 text-amber-200 font-medium">Siap audio: taruh A.mp3–Z.mp3 di folder yang sama. Di sini suara mungkin tidak aktif.</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <button id="btnVoice" class="shine bg-amber-400 hover:bg-amber-300 text-amber-950 font-semibold px-4 py-2 rounded-xl shadow-lg transition">
+          🔊 Suara (Coba)
+        </button>
+        <button id="btnReset" class="bg-white/15 hover:bg-white/25 text-white font-semibold px-4 py-2 rounded-xl shadow-lg transition">
+          🔄 Reset
+        </button>
+      </div>
+    </header>
+
+    <nav class="mt-6 bg-white/10 backdrop-blur rounded-2xl p-1 inline-flex">
+      <button data-tab="belajar" class="tab-btn active px-5 py-2.5 rounded-xl font-semibold transition">Belajar</button>
+      <button data-tab="tebak" class="tab-btn px-5 py-2.5 rounded-xl font-semibold transition">Tebak Huruf</button>
+      <button data-tab="cari" class="tab-btn px-5 py-2.5 rounded-xl font-semibold transition">Cari Huruf</button>
+    </nav>
+
+    <main class="mt-6 grid gap-6">
+      <!-- Belajar -->
+      <section id="panel-belajar" class="panel bg-white/10 rounded-3xl p-5 md:p-8 shadow-2xl">
+        <div class="grid md:grid-cols-2 gap-8 items-center">
+          <div class="order-2 md:order-1">
+            <div id="flashCard" class="rounded-3xl bg-white text-gray-900 p-8 md:p-10 shadow-xl relative overflow-hidden">
+              <div class="absolute inset-0 pointer-events-none opacity-10" aria-hidden="true">
+                <div class="w-40 h-40 bg-gradient-to-tr from-fuchsia-400 to-indigo-400 rounded-full blur-3xl absolute -top-10 -left-10"></div>
+                <div class="w-40 h-40 bg-gradient-to-tr from-violet-400 to-cyan-400 rounded-full blur-3xl absolute -bottom-10 -right-10"></div>
+              </div>
+              <div class="relative z-10">
+                <div class="flex items-center justify-between">
+                  <span id="learnIndex" class="text-sm font-medium text-gray-500">1/26</span>
+                  <span class="text-sm font-semibold text-indigo-600">Mode Belajar</span>
+                </div>
+                <div class="mt-6 text-center">
+                  <div id="emoji" class="text-7xl md:text-8xl h-[1.2em] leading-none select-none">🍎</div>
+                  <div class="mt-6">
+                    <div id="letter" class="text-7xl md:text-8xl font-extrabold tracking-tight select-none">A</div>
+                    <div id="word" class="text-lg md:text-xl text-gray-700 mt-2">Apel</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-6 flex flex-wrap gap-3">
+              <button id="prevBtn" class="bg-indigo-500 hover:bg-indigo-400 text-white font-semibold px-4 py-2 rounded-xl shadow-lg transition">← Sebelumnya</button>
+              <button id="nextBtn" class="bg-indigo-500 hover:bg-indigo-400 text-white font-semibold px-4 py-2 rounded-xl shadow-lg transition">Berikutnya →</button>
+              <button id="randBtn" class="bg-fuchsia-500 hover:bg-fuchsia-400 text-white font-semibold px-4 py-2 rounded-xl shadow-lg transition">🎲 Acak</button>
+              <button id="showLower" class="bg-white/15 hover:bg-white/25 text-white font-semibold px-4 py-2 rounded-xl transition">Tampilkan Huruf Kecil</button>
+              <button id="playNow" class="bg-amber-400 hover:bg-amber-300 text-amber-950 font-semibold px-4 py-2 rounded-xl shadow-lg transition">🔊 Putar Huruf Ini</button>
+            </div>
+          </div>
+          <div class="order-1 md:order-2">
+            <div class="bg-white/10 rounded-3xl p-6 md:p-8">
+              <h3 class="text-xl font-bold">Tips Cepat</h3>
+              <ul class="list-disc list-inside mt-2 space-y-1 text-white/90">
+                <li>Tekan “Berikutnya” untuk maju huruf demi huruf.</li>
+                <li>Pakai “Acak” untuk variasi seru.</li>
+                <li>Aktifkan “Huruf Kecil” untuk latihan tambahan.</li>
+              </ul>
+              <div id="quickJump" class="mt-4 flex flex-wrap gap-2"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tebak Huruf (Dibalik) -->
+      <section id="panel-tebak" class="panel hidden bg-white/10 rounded-3xl p-5 md:p-8 shadow-2xl">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <h3 class="text-2xl font-bold">Tebak Huruf (Dibalik)</h3>
+          <div class="flex items-center gap-3">
+            <div class="bg-white/10 rounded-xl px-4 py-2">
+              Skor: <span id="quizScore" class="font-bold">0</span>
+            </div>
+            <button id="quizNew" class="bg-emerald-400 hover:bg-emerald-300 text-emerald-950 font-semibold px-4 py-2 rounded-xl shadow-lg transition">Soal Baru</button>
+          </div>
+        </div>
+        <div class="mt-6 grid md:grid-cols-2 gap-8 items-center">
+          <div class="bg-white rounded-3xl p-8 text-gray-900 shadow-xl">
+            <div class="text-sm font-medium text-indigo-600">Huruf</div>
+            <div id="quizLetter" class="text-8xl mt-4 font-extrabold tracking-tight select-none">S</div>
+            <div class="mt-4 text-gray-700">Pilih gambar yang sesuai untuk huruf tersebut.</div>
+            <div id="quizReveal" class="mt-3 text-lg font-semibold text-emerald-600"></div>
+          </div>
+          <div>
+            <div class="flex items-center gap-3 mb-4">
+              <button id="quizPlay" class="bg-amber-400 hover:bg-amber-300 text-amber-950 font-semibold px-4 py-2 rounded-xl shadow-lg transition">🔊 Putar Huruf</button>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <button class="quizOpt bg-white text-gray-900 font-semibold px-4 py-6 rounded-2xl shadow transition text-5xl">🍎</button>
+              <button class="quizOpt bg-white text-gray-900 font-semibold px-4 py-6 rounded-2xl shadow transition text-5xl">⚽</button>
+              <button class="quizOpt bg-white text-gray-900 font-semibold px-4 py-6 rounded-2xl shadow transition text-5xl">🍒</button>
+              <button class="quizOpt bg-white text-gray-900 font-semibold px-4 py-6 rounded-2xl shadow transition text-5xl">🎲</button>
+              <button class="quizOpt bg-white text-gray-900 font-semibold px-4 py-6 rounded-2xl shadow transition text-5xl">🦅</button>
+              <button class="quizOpt bg-white text-gray-900 font-semibold px-4 py-6 rounded-2xl shadow transition text-5xl">📷</button>
+            </div>
+            <div id="quizFeedback" class="mt-4 font-semibold"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Cari Huruf -->
+      <section id="panel-cari" class="panel hidden bg-white/10 rounded-3xl p-5 md:p-8 shadow-2xl">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <h3 class="text-2xl font-bold">Cari Huruf</h3>
+          <div class="flex items-center gap-3">
+            <div class="bg-white/10 rounded-xl px-4 py-2">
+              Target: <span id="findTarget" class="font-bold">A</span>
+            </div>
+            <div class="bg-white/10 rounded-xl px-4 py-2">
+              Waktu: <span id="findTime" class="font-bold">30</span>d
+            </div>
+            <div class="bg-white/10 rounded-xl px-4 py-2">
+              Benar: <span id="findScore" class="font-bold">0</span>
+            </div>
+            <button id="findStart" class="bg-cyan-400 hover:bg-cyan-300 text-cyan-950 font-semibold px-4 py-2 rounded-xl shadow-lg transition">Mulai</button>
+            <button id="findPlay" class="bg-amber-400 hover:bg-amber-300 text-amber-950 font-semibold px-4 py-2 rounded-xl shadow-lg transition">🔊 Putar Target</button>
+          </div>
+        </div>
+        <div class="mt-6">
+          <div id="findGrid" class="grid grid-cols-6 gap-2"></div>
+          <div id="findFeedback" class="mt-4 font-semibold"></div>
+        </div>
+      </section>
+    </main>
+
+    <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-white text-gray-900 px-4 py-2 rounded-xl shadow-xl hidden"></div>
+    <footer class="mt-10 text-center text-white/80">Dibuat oleh Canva Code • Siap dipakai di berbagai perangkat</footer>
+  </div>
+
+  <audio id="letterAudio" preload="auto"></audio>
+
+  <script>
+    // Data
+    const letters = [
+      { l:'A', e:'🍎', w:'Apel' },
+      { l:'B', e:'⚽', w:'Bola' },
+      { l:'C', e:'🍒', w:'Ceri' },
+      { l:'D', e:'🎲', w:'Dadu' },
+      { l:'E', e:'🦅', w:'Elang' },
+      { l:'F', e:'📷', w:'Foto' },
+      { l:'G', e:'🐘', w:'Gajah' },
+      { l:'H', e:'❤️', w:'Hati' },
+      { l:'I', e:'🐟', w:'Ikan' },
+      { l:'J', e:'🦒', w:'Jerapah' },
+      { l:'K', e:'🐱', w:'Kucing' },
+      { l:'L', e:'💡', w:'Lampu' },
+      { l:'M', e:'🥭', w:'Mangga' },
+      { l:'N', e:'🍍', w:'Nanas' },
+      { l:'O', e:'🦧', w:'Orangutan' },
+      { l:'P', e:'🐼', w:'Panda' },
+      { l:'Q', e:'🧩', w:'Kuis' },
+      { l:'R', e:'🚀', w:'Roket' },
+      { l:'S', e:'🐮', w:'Sapi' },
+      { l:'T', e:'🚚', w:'Truk' },
+      { l:'U', e:'🐛', w:'Ulat' },
+      { l:'V', e:'🛵', w:'Vespa' },
+      { l:'W', e:'🥕', w:'Wortel' },
+      { l:'X', e:'🩻', w:'X-Ray' },
+      { l:'Y', e:'🪀', w:'Yoyo' },
+      { l:'Z', e:'🦓', w:'Zebra' },
+    ];
+
+    // Util
+    const $ = (q, el=document) => el.querySelector(q);
+    const $$ = (q, el=document) => [...el.querySelectorAll(q)];
+    const toast = (msg, type='info') => {
+      const t = $('#toast');
+      t.textContent = msg;
+      t.classList.remove('hidden');
+      t.classList.remove('bg-red-500','text-white','bg-green-500','bg-white','text-gray-900');
+      if(type==='error'){ t.classList.add('bg-red-500','text-white'); }
+      else if(type==='success'){ t.classList.add('bg-green-500','text-white'); }
+      else { t.classList.add('bg-white','text-gray-900'); }
+      setTimeout(()=> t.classList.add('hidden'), 2000);
+    };
+
+    // Tabs
+    const tabButtons = $$('.tab-btn');
+    const panels = {
+      belajar: $('#panel-belajar'),
+      tebak: $('#panel-tebak'),
+      cari: $('#panel-cari')
+    };
+    tabButtons.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        tabButtons.forEach(b=> b.classList.remove('active','bg-white','text-gray-900'));
+        btn.classList.add('active','bg-white','text-gray-900');
+        Object.values(panels).forEach(p=> p.classList.add('hidden'));
+        panels[btn.dataset.tab].classList.remove('hidden');
+      });
+    });
+
+    // Belajar
+    const learnIndexEl = $('#learnIndex');
+    const emojiEl = $('#emoji');
+    const letterEl = $('#letter');
+    const wordEl = $('#word');
+    const prevBtn = $('#prevBtn');
+    const nextBtn = $('#nextBtn');
+    const randBtn = $('#randBtn');
+    const showLowerBtn = $('#showLower');
+    const quickJump = $('#quickJump');
+    let learnIdx = 0;
+    let showLower = false;
+
+    function renderLearn() {
+      const item = letters[learnIdx];
+      learnIndexEl.textContent = `${learnIdx+1}/26`;
+      emojiEl.textContent = item.e;
+      letterEl.textContent = showLower ? item.l.toLowerCase() : item.l;
+      wordEl.textContent = item.w;
+      $('#flashCard').classList.add('pop');
+      setTimeout(()=> $('#flashCard').classList.remove('pop'), 230);
+    }
+    prevBtn.addEventListener('click', ()=>{ learnIdx=(learnIdx-1+letters.length)%letters.length; renderLearn(); });
+    nextBtn.addEventListener('click', ()=>{ learnIdx=(learnIdx+1)%letters.length; renderLearn(); });
+    randBtn.addEventListener('click', ()=>{
+      let n; do { n = Math.floor(Math.random()*letters.length); } while(n===learnIdx);
+      learnIdx=n; renderLearn();
+    });
+    showLowerBtn.addEventListener('click', ()=>{
+      showLower=!showLower;
+      showLowerBtn.textContent = showLower ? 'Tampilkan Huruf Besar' : 'Tampilkan Huruf Kecil';
+      renderLearn();
+    });
+    letters.forEach((it,i)=>{
+      const b = document.createElement('button');
+      b.textContent = it.l;
+      b.className = 'bg-white/15 hover:bg-white/25 text-white font-semibold w-10 h-10 rounded-xl transition';
+      b.addEventListener('click', ()=>{ learnIdx=i; renderLearn(); });
+      quickJump.appendChild(b);
+    });
+    renderLearn();
+
+    // Tebak Huruf (Dibalik)
+    const quizLetterEl = $('#quizLetter');
+    const quizReveal = $('#quizReveal');
+    const quizOpts = $$('.quizOpt');
+    const quizFeedback = $('#quizFeedback');
+    const quizNew = $('#quizNew');
+    const quizScoreEl = $('#quizScore');
+    let quizAnswer = 'A';
+    let quizScore = 0;
+
+    function newQuiz() {
+      const pick = letters[Math.floor(Math.random()*letters.length)];
+      quizAnswer = pick.l;
+      quizLetterEl.textContent = pick.l;
+      quizReveal.textContent = '';
+      const opts = new Set([pick.e]);
+      while (opts.size < 6) opts.add(letters[Math.floor(Math.random()*letters.length)].e);
+      const arr = [...opts].sort(()=> Math.random()-0.5);
+      quizOpts.forEach((btn, i)=>{
+        btn.textContent = arr[i];
+        btn.classList.remove('bg-emerald-500','bg-rose-500');
+      });
+      quizFeedback.textContent = '';
+    }
+    quizOpts.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const emo = btn.textContent.trim();
+        const data = letters.find(x=>x.e===emo);
+        if (!data) return;
+        if (data.l === quizAnswer) {
+          quizScore++; quizScoreEl.textContent = quizScore;
+          quizFeedback.textContent = 'Benar! 🎉';
+          quizFeedback.className = 'mt-4 font-semibold text-emerald-200';
+          quizReveal.textContent = data.w;
+          btn.classList.add('bg-emerald-500');
+        } else {
+          quizFeedback.textContent = 'Kurang tepat. Coba lagi!';
+          quizFeedback.className = 'mt-4 font-semibold text-rose-200';
+          btn.classList.add('bg-rose-500');
+        }
+      });
+    });
+    quizNew.addEventListener('click', newQuiz);
+    newQuiz();
+
+    // Cari Huruf (dengan pengaman agar tidak ganti ganda)
+    const findTargetEl = $('#findTarget');
+    const findTimeEl = $('#findTime');
+    const findScoreEl = $('#findScore');
+    const findStartBtn = $('#findStart');
+    const findGrid = $('#findGrid');
+    const findFeedback = $('#findFeedback');
+    let findTarget = 'A';
+    let findScore = 0;
+    let findTimer = null;
+    let timeLeft = 30;
+    let transitioning = false; // cegah ganti soal ganda
+    const gridCols = 6;
+    const gridRows = 6;
+
+    function fillGrid(target) {
+      findGrid.innerHTML = '';
+      const total = gridCols * gridRows;
+      const targetCount = Math.floor(Math.random()*3) + 4; // 4-6 target
+      const positions = new Set();
+      while (positions.size < targetCount) positions.add(Math.floor(Math.random()*total));
+
+      for (let i=0;i<total;i++) {
+        const cell = document.createElement('button');
+        const isTarget = positions.has(i);
+        const others = letters.map(x=>x.l).filter(x=>x!==target);
+        const ch = isTarget ? target : others[Math.floor(Math.random()*others.length)];
+        cell.textContent = ch;
+        cell.className = "bg-white/15 hover:bg-white/25 text-white font-bold rounded-xl h-12 flex items-center justify-center transition";
+        cell.addEventListener('click', ()=>{
+          if (timeLeft<=0 || transitioning) return;
+          if (ch === target) {
+            transitioning = true;
+            findScore++; findScoreEl.textContent = findScore;
+            cell.classList.add('bg-emerald-500'); cell.disabled = true;
+            findFeedback.textContent = 'Hebat! Soal berikutnya!';
+            findFeedback.className = 'mt-4 font-semibold text-emerald-200';
+            setTimeout(()=>{
+              newFindRound();
+              transitioning = false;
+            }, 220); // cepat tapi tetap terasa
+          } else {
+            findFeedback.textContent = 'Yah, itu bukan huruf target.';
+            findFeedback.className = 'mt-4 font-semibold text-rose-200';
+          }
+        });
+        findGrid.appendChild(cell);
+      }
+    }
+
+    function newFindRound() {
+      const pick = letters[Math.floor(Math.random()*letters.length)].l;
+      findTarget = pick;
+      findTargetEl.textContent = pick;
+      findFeedback.textContent = '';
+      fillGrid(pick);
+    }
+
+    function startFindGame() {
+      findScore = 0; timeLeft = 30; transitioning = false;
+      findScoreEl.textContent = '0';
+      findTimeEl.textContent = timeLeft;
+      newFindRound();
+      clearInterval(findTimer);
+      findTimer = setInterval(()=>{
+        timeLeft--;
+        findTimeEl.textContent = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(findTimer); findTimer = null;
+          findFeedback.textContent = `Selesai! Skor kamu: ${findScore}`;
+          findFeedback.className = 'mt-4 font-semibold text-yellow-200';
+          $$('#findGrid button').forEach(b=> b.disabled = true);
+        }
+      }, 1000);
+
+      // Nonaktifkan refresh otomatis per waktu untuk mencegah ganti soal ganda
+      // Soal kini hanya berganti saat jawaban benar.
+    }
+    findStartBtn.addEventListener('click', startFindGame);
+
+    // Audio siap
+    const audioEl = document.getElementById('letterAudio');
+    function playLetter(letter) {
+      const src = `${letter.toUpperCase()}.mp3`;
+      audioEl.src = src;
+      const p = audioEl.play();
+      if (p && typeof p.catch === 'function') {
+        p.catch(()=> toast('Gagal memutar. Pastikan file audio ada & izinkan suara.'));
+      }
+    }
+    $('#btnVoice').addEventListener('click', ()=>{
+      const current = letters[learnIdx].l;
+      playLetter(current);
+      toast(`Memutar huruf ${current} (jika file ada)`);
+    });
+    $('#playNow').addEventListener('click', ()=> playLetter(letters[learnIdx].l));
+    $('#quizPlay').addEventListener('click', ()=> playLetter(quizAnswer));
+    $('#findPlay').addEventListener('click', ()=> playLetter(findTarget));
+
+    // Reset
+    $('#btnReset').addEventListener('click', ()=>{
+      // Belajar
+      learnIdx = 0; showLower = false;
+      showLowerBtn.textContent = 'Tampilkan Huruf Kecil';
+      renderLearn();
+      // Tebak
+      quizScore = 0; quizScoreEl.textContent = '0'; newQuiz(); quizFeedback.textContent = ''; quizReveal.textContent = '';
+      // Cari
+      findScore = 0; timeLeft = 30; transitioning = false;
+      findScoreEl.textContent = '0'; findTimeEl.textContent = '30'; findFeedback.textContent = '';
+      findGrid.innerHTML = '';
+      clearInterval(findTimer); findTimer = null;
+      toast('Semua mode telah direset!');
+    });
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'971b6b72d643e78d',t:'MTc1NTYyNTA1NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
