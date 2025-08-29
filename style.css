@@ -3,7 +3,7 @@
 }
 
 .hero-section {
-    background: #a6c8ff; /* pastel blue */
+    background: #162b4e; /* pastel blue */
     color: white;
     padding: 80px 0;
 }
@@ -114,7 +114,7 @@
 .counter-number {
     font-size: 3.5rem;
     font-weight: 800;
-    color: #6c63ff; /* pastel purple */
+    color: #162b4e; /* pastel purple */
     background: none;
     -webkit-background-clip: initial;
     -webkit-text-fill-color: initial;
