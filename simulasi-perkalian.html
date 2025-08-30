@@ -70,14 +70,21 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border:0;border-radiu
       color: white;
       box-shadow: 0 10px 25px rgba(124,58,237,0.4);
     }
-    .radial {
-      background:
-        radial-gradient(1200px 800px at 10% -20%, rgba(255,255,255,0.18), transparent 40%),
-        radial-gradient(1000px 700px at 100% 0%, rgba(255,255,255,0.12), transparent 45%);
+    .radial { }
+    /* Tema suasana sinar matahari */
+    .sunny {
+      background: #ffefba; /* warna hangat matahari tanpa gradasi */
+      color: #0b1020;
     }
+    /* Matahari - dihapus */
+    /* Sinar matahari - dihapus */
+    /* Naikkan semua konten di atas efek latar */
+    header, main, footer, #tipsModal { position: relative; z-index: 1; }
+    /* Kartu tetap kontras terhadap latar cerah */
+    .glass{ background: rgba(11,16,32,0.85); }
   </style>
 </head>
-<body class="min-h-screen bg-dark text-white radial">
+<body class="min-h-screen bg-white text-white">
   <div class="confetti" id="confetti"></div>
 
   <header class="max-w-6xl mx-auto px-6 pt-10">
@@ -127,13 +134,12 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border:0;border-radiu
         </div>
 
         <div>
-          <label class="block text-sm opacity-90 mb-2">Tingkat Kesulitan</label>
+          <label class="block text-sm opacity-90 mb-2">Jenis Soal</label>
           <div class="flex gap-2">
-            <button data-diff="mudah" class="btn chip glass rounded-xl px-4 py-2 text-sm hover:bg-white/20 diff-btn tab-active">Mudah</button>
-            <button data-diff="sedang" class="btn chip glass rounded-xl px-4 py-2 text-sm hover:bg-white/20 diff-btn">Sedang</button>
-            <button data-diff="sulit" class="btn chip glass rounded-xl px-4 py-2 text-sm hover:bg-white/20 diff-btn">Sulit</button>
+            <button data-diff="mudah" class="btn chip glass rounded-xl px-4 py-2 text-sm hover:bg-white/20 diff-btn tab-active">Pilihan Ganda</button>
+            <button data-diff="sedang" class="btn chip glass rounded-xl px-4 py-2 text-sm hover:bg-white/20 diff-btn">Isian Langsung</button>
           </div>
-          <p class="text-xs opacity-80 mt-2">Mudah: pilihan ganda, Sedang: isian, Sulit: waktu lebih singkat.</p>
+          <p class="text-xs opacity-80 mt-2">Pilihan Ganda: ada pilihan jawaban, Isian Langsung: ketik jawaban sendiri.</p>
         </div>
 
         <div>
@@ -316,7 +322,7 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border:0;border-radiu
       // Quiz
       target: 10, done: 0, lives: 3, current: null,
       // Challenge
-      timeTotal: 60, timeLeft: 60, timer: null, cCurrent: null
+      timeTotal: 60, timeLeft: 60, timer: null, cCurrent: null, challengeActive: false
     };
 
     // Elements
@@ -535,7 +541,6 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border:0;border-radiu
       questionEl.textContent = `${a} × ${b} = ?`;
       feedbackEl.textContent = '';
       const isEasy = state.difficulty==='mudah';
-      const isHard = state.difficulty==='sulit';
 
       // Generate choices for easy & also display for others
       const options = new Set([a*b]);
@@ -552,11 +557,11 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border:0;border-radiu
       // Input visibility based on difficulty
       answerInput.value = '';
       answerInput.placeholder = state.difficulty==='mudah' ? 'Atau pilih di atas' : 'Ketik jawaban';
-      choicesEl.parentElement.classList.toggle('hidden', state.difficulty==='sedang' || state.difficulty==='sulit');
+      choicesEl.classList.toggle('hidden', state.difficulty==='sedang');
 
-      if (isHard) {
-        // Subtle prompt to be quick
-        feedbackEl.innerHTML = 'Mode Sulit aktif — coba jawab cepat!';
+      if (state.difficulty==='sedang') {
+        // Prompt for medium difficulty
+        feedbackEl.innerHTML = 'Mode Isian Langsung — ketik jawaban langsung!';
       }
 
       // Bind choice clicks
@@ -568,6 +573,9 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border:0;border-radiu
     }
 
     function checkAnswer(value, btnEl=null, isChallenge=false) {
+      // Don't allow answers if challenge is not active
+      if (isChallenge && !state.challengeActive) return;
+      
       const cur = isChallenge ? state.cCurrent : state.current;
       const correct = cur && value === cur.ans;
 
@@ -669,13 +677,17 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border:0;border-radiu
       `).join('');
       challengeChoices.querySelectorAll('button').forEach(b=>{
         b.addEventListener('click', ()=> checkAnswer(parseInt(b.dataset.choice,10), b, true));
+        b.disabled = false; // Make sure buttons are enabled for new questions
       });
       challengeInput.value='';
+      challengeInput.disabled = false; // Make sure input is enabled for new questions
+      challengeSubmit.disabled = false;
     }
 
     function startChallenge() {
       stopChallenge();
       state.timeLeft = state.timeTotal;
+      state.challengeActive = true;
       timeLeftEl.textContent = state.timeLeft;
       timeBar.style.width = '100%';
       newChallengeQ();
@@ -685,8 +697,13 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border:0;border-radiu
         timeBar.style.width = (state.timeLeft/state.timeTotal*100) + '%';
         if (state.timeLeft <= 0) {
           stopChallenge();
-          challengeFeedback.textContent = 'Waktu habis! 🎯 Coba lagi dan kalahkan skor kamu!';
+          state.challengeActive = false;
+          challengeFeedback.innerHTML = `Waktu habis! 🎯<br>Skor Akhir: <strong>${state.score}</strong> poin<br>Rantai Terpanjang: <strong>${state.streak}</strong> jawaban benar berturut-turut!<br><br>Tekan "Mulai Tantangan" untuk bermain lagi.`;
           challengeFeedback.classList.add('text-amber-200');
+          // Disable inputs
+          challengeInput.disabled = true;
+          challengeSubmit.disabled = true;
+          challengeChoices.querySelectorAll('button').forEach(btn => btn.disabled = true);
         }
       }, 1000);
     }
@@ -700,8 +717,14 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border:0;border-radiu
 
     function resetChallenge(refresh=true) {
       stopChallenge();
+      state.challengeActive = false;
       timeBar.style.width = '100%';
       timeLeftEl.textContent = state.timeTotal;
+      // Re-enable inputs
+      challengeInput.disabled = false;
+      challengeSubmit.disabled = false;
+      challengeFeedback.textContent = '';
+      challengeFeedback.classList.remove('text-amber-200');
       if (refresh) newChallengeQ();
     }
 
@@ -821,4 +844,5 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border:0;border-radiu
     const origCheckAnswer = checkAnswer;
     // Note: We keep single source; timing effect handled in challenge mode
   </script>
+</body>
 </html>
