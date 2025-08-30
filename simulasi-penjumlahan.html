@@ -1,511 +1,746 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Simulasi Penjumlahan Ceria</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    :root { --emoji-size: 44px; }
-    body { font-family: 'Poppins', sans-serif; }
-    .emoji { font-size: var(--emoji-size); line-height: 1; }
-    .floaty { animation: floaty 3s ease-in-out infinite; }
-    @keyframes floaty { 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-6px) } }
-    .wiggle { animation: wiggle 0.5s ease-in-out; }
-    @keyframes wiggle { 0%{ transform: rotate(0) } 25%{ transform: rotate(-6deg) } 75%{ transform: rotate(6deg) } 100%{ transform: rotate(0) } }
-    .pop { animation: pop 320ms ease-out; }
-    @keyframes pop { 0%{ transform: scale(0.7); opacity: 0 } 80%{ transform: scale(1.08); opacity: 1 } 100%{ transform: scale(1) } }
-    .slide-in-up { animation: slideInUp 420ms cubic-bezier(.2,.8,.2,1); }
-    @keyframes slideInUp { from{ transform: translateY(20px); opacity: 0 } to{ transform: translateY(0); opacity: 1 } }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi Penjumlahan Ceria</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    /* Confetti */
-    .confetti-piece {
-      position: absolute; width: 10px; height: 10px; border-radius: 2px; opacity: 0;
-      animation: confetti 1200ms ease-out forwards;
-    }
-    @keyframes confetti {
-      0% { transform: translateY(0) rotate(0); opacity: 0; }
-      10% { opacity: 1; }
-      100% { transform: translateY(140px) rotate(300deg); opacity: 0; }
-    }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: #162b4e;
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-    /* Flying clone */
-    .fly {
-      position: absolute; pointer-events: none; will-change: transform, opacity;
-      transition: transform 520ms cubic-bezier(.2,.9,.2,1), opacity 520ms ease;
-      filter: drop-shadow(0 6px 10px rgba(0,0,0,.25));
-    }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
 
-    .emoji-item { transition: transform 450ms cubic-bezier(.2,.9,.2,1), opacity 450ms ease; }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
-    @media (max-width: 640px) {
-      :root { --emoji-size: 36px; }
-    }
-  </style>
+        .title {
+            font-size: 2.5rem;
+            color: #4a5568;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #718096;
+            margin-bottom: 20px;
+        }
+
+        .image-selector {
+            background: #5481c8;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .selector-title {
+            font-size: 1.3rem;
+            color: white;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .image-options {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .image-option {
+            background: white;
+            border: 3px solid transparent;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .image-option:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .image-option.active {
+            border-color: #4299e1;
+            background: #ebf8ff;
+        }
+
+        .image-option .emoji {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .image-option .label {
+            font-size: 0.9rem;
+            color: #4a5568;
+            font-weight: bold;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .group {
+            background: #5481c8;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .group-title {
+            font-size: 1.4rem;
+            color: white;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .counter-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .counter-btn {
+            background: #4299e1;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .counter-btn:hover {
+            background: #3182ce;
+            transform: scale(1.1);
+        }
+
+        .counter-display {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            min-width: 60px;
+        }
+
+        .items-display {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            min-height: 80px;
+            align-items: center;
+        }
+
+        .item {
+            font-size: 2.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .item:hover {
+            transform: scale(1.2);
+        }
+
+        .item.numbered::after, .result-item.numbered::after {
+            content: attr(data-number);
+            position: absolute;
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #e53e3e;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: bold;
+            z-index: 10;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: #162b4e;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+        }
+
+        .action-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-section {
+            background: #5481c8;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .equation {
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .result-display {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 60px;
+            min-height: 120px;
+            align-items: flex-start;
+            padding-top: 20px;
+        }
+
+        .result-item {
+            font-size: 3rem;
+            transition: all 0.5s ease;
+            cursor: pointer;
+            opacity: 0;
+            transform: scale(0);
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .result-item.animate-in {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .tip {
+            background: #bee3f8;
+            padding: 15px;
+            border-radius: 10px;
+            color: #2c5282;
+            font-size: 0.9rem;
+            margin-top: 15px;
+        }
+
+        .count-one-by-one {
+            background: #48bb78;
+            margin-top: 15px;
+        }
+
+        .count-one-by-one:hover {
+            background: #38a169;
+        }
+
+        .answer-input-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+        }
+
+        .answer-prompt {
+            font-size: 1.3rem;
+            color: white;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .answer-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .answer-input {
+            font-size: 1.5rem;
+            padding: 10px 15px;
+            border: 3px solid #4299e1;
+            border-radius: 10px;
+            text-align: center;
+            width: 80px;
+            font-weight: bold;
+            background: white;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #2b6cb0;
+            box-shadow: 0 0 10px rgba(66, 153, 225, 0.5);
+        }
+
+        .check-answer {
+            background: #4299e1;
+            font-size: 1rem;
+            padding: 10px 20px;
+        }
+
+        .check-answer:hover {
+            background: #3182ce;
+        }
+
+        .feedback {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 10px;
+            min-height: 30px;
+        }
+
+        .feedback.correct {
+            color: #48bb78;
+            animation: correctAnswer 1s ease;
+        }
+
+        .feedback.incorrect {
+            color: #f56565;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes correctAnswer {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @keyframes equationUpdate {
+            0% { transform: scale(1); color: white; }
+            50% { transform: scale(1.1); color: #48bb78; }
+            100% { transform: scale(1); color: #48bb78; }
+        }
+
+        .equation.correct {
+            animation: equationUpdate 1s ease;
+            color: #48bb78 !important;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .bounce {
+            animation: bounce 0.6s ease;
+        }
+
+        @keyframes moveToResult {
+            0% { 
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+            50% { 
+                transform: scale(0.8) translateY(-50px);
+                opacity: 0.7;
+            }
+            100% { 
+                transform: scale(1) translateY(0);
+                opacity: 0;
+            }
+        }
+
+        .move-to-result {
+            animation: moveToResult 1s ease-in-out forwards;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-sky-500 via-indigo-500 to-fuchsia-500 text-white">
-  <div class="max-w-5xl mx-auto p-6 sm:p-10">
-    <!-- Header -->
-    <header class="text-center mb-8">
-      <div class="inline-flex items-center gap-3 bg-white/10 backdrop-blur px-5 py-2 rounded-full border border-white/20 shadow-lg slide-in-up">
-        <span class="emoji">✨</span>
-        <p class="text-sm">Belajar sambil bermain</p>
-      </div>
-      <h1 class="text-3xl sm:text-5xl font-extrabold mt-4 leading-tight drop-shadow-md">Simulasi Penjumlahan Ceria</h1>
-      <p class="text-white/90 mt-2 text-base sm:text-lg">Atur jumlahnya, gabungkan, lalu hitung satu per satu!</p>
-    </header>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">🎯 Simulasi Penjumlahan Ceria</h1>
+            <p class="subtitle">Atur jumlahnya, gabungkan, lalu hitung satu per satu!</p>
+        </div>
 
-    <!-- Controls -->
-    <section class="bg-white/10 backdrop-blur rounded-2xl p-4 sm:p-6 border border-white/20 shadow-xl slide-in-up">
-      <div class="flex flex-col lg:flex-row gap-4 lg:items-end">
-        <div class="flex-1 grid grid-cols-2 sm:grid-cols-3 gap-3">
-          <!-- Pilih emoji -->
-          <div class="col-span-2 sm:col-span-1">
-            <label class="block text-sm mb-1">Pilih gambar</label>
-            <select id="themeSelect" class="w-full text-slate-900 rounded-xl px-3 py-2 outline-none">
-              <option value="🍎">🍎 Apel</option>
-              <option value="🌟">🌟 Bintang</option>
-              <option value="🐟">🐟 Ikan</option>
-              <option value="🧁">🧁 Kue</option>
-              <option value="💎">💎 Permata</option>
-              <option value="🌸">🌸 Bunga</option>
-              <option value="🚗">🚗 Mobil</option>
-              <option value="🎈">🎈 Balon</option>
-            </select>
-          </div>
-
-          <!-- Kelompok A -->
-          <div>
-            <label class="block text-sm mb-1">Kelompok A</label>
-            <div class="flex items-center bg-white/90 rounded-xl overflow-hidden shadow">
-              <button id="decA" class="px-4 py-2 bg-slate-900 text-white hover:bg-slate-800 active:scale-95">−</button>
-              <input id="countA" type="number" min="0" max="10" value="3" class="w-full text-center text-slate-900 font-semibold py-2 outline-none" />
-              <button id="incA" class="px-4 py-2 bg-slate-900 text-white hover:bg-slate-800 active:scale-95">+</button>
+        <div class="image-selector">
+            <h3 class="selector-title">Pilih Gambar</h3>
+            <div class="image-options">
+                <div class="image-option active" data-type="apple">
+                    <span class="emoji">🍎</span>
+                    <div class="label">Apel</div>
+                </div>
+                <div class="image-option" data-type="star">
+                    <span class="emoji">⭐</span>
+                    <div class="label">Bintang</div>
+                </div>
+                <div class="image-option" data-type="heart">
+                    <span class="emoji">❤️</span>
+                    <div class="label">Hati</div>
+                </div>
+                <div class="image-option" data-type="flower">
+                    <span class="emoji">🌸</span>
+                    <div class="label">Bunga</div>
+                </div>
+                <div class="image-option" data-type="ball">
+                    <span class="emoji">⚽</span>
+                    <div class="label">Bola</div>
+                </div>
+                <div class="image-option" data-type="candy">
+                    <span class="emoji">🍭</span>
+                    <div class="label">Permen</div>
+                </div>
             </div>
-          </div>
+        </div>
 
-          <!-- Kelompok B -->
-          <div>
-            <label class="block text-sm mb-1">Kelompok B</label>
-            <div class="flex items-center bg-white/90 rounded-xl overflow-hidden shadow">
-              <button id="decB" class="px-4 py-2 bg-slate-900 text-white hover:bg-slate-800 active:scale-95">−</button>
-              <input id="countB" type="number" min="0" max="10" value="2" class="w-full text-center text-slate-900 font-semibold py-2 outline-none" />
-              <button id="incB" class="px-4 py-2 bg-slate-900 text-white hover:bg-slate-800 active:scale-95">+</button>
+        <div class="controls">
+            <div class="group">
+                <h3 class="group-title">Kelompok A</h3>
+                <div class="counter-controls">
+                    <button class="counter-btn" onclick="changeCount('A', -1)">−</button>
+                    <span class="counter-display" id="countA">3</span>
+                    <button class="counter-btn" onclick="changeCount('A', 1)">+</button>
+                </div>
+                <div class="items-display" id="itemsA"></div>
             </div>
-          </div>
-        </div>
 
-        <!-- Tombol aksi -->
-        <div class="flex flex-wrap gap-2">
-          <button id="randomBtn" class="px-4 py-2 rounded-xl bg-amber-400 text-slate-900 font-semibold hover:bg-amber-300 active:scale-95 shadow">Acak</button>
-          <button id="combineBtn" class="px-4 py-2 rounded-xl bg-emerald-400 text-slate-900 font-semibold hover:bg-emerald-300 active:scale-95 shadow">Gabungkan</button>
-          <button id="showBtn" class="px-4 py-2 rounded-xl bg-cyan-400 text-slate-900 font-semibold hover:bg-cyan-300 active:scale-95 shadow">Tampilkan Hasil</button>
-          <button id="resetBtn" class="px-4 py-2 rounded-xl bg-white/20 font-semibold hover:bg-white/30 active:scale-95 shadow">Reset</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Playground -->
-    <section class="mt-6 space-y-6">
-      <!-- Kelompok A & B -->
-      <div id="groupsCard" class="bg-white/10 backdrop-blur rounded-2xl p-5 border border-white/20 shadow-xl relative overflow-hidden">
-        <div class="flex items-center justify-center gap-4 mb-4">
-          <span class="text-lg bg-white/10 px-3 py-1 rounded-full border border-white/20">A + B</span>
-        </div>
-
-        <div id="groupsContainer" class="transition-all">
-          <div class="flex flex-col sm:flex-row items-stretch sm:items-start justify-center gap-6">
-            <!-- A -->
-            <div class="group-a flex-1 bg-white/5 rounded-xl border border-white/10 p-4">
-              <div class="flex items-center justify-between mb-2">
-                <h3 class="font-semibold">Kelompok A</h3>
-                <span id="labelA" class="text-white/80 text-sm">3</span>
-              </div>
-              <div id="areaA" class="min-h-[72px] flex flex-wrap gap-2"></div>
+            <div class="group">
+                <h3 class="group-title">Kelompok B</h3>
+                <div class="counter-controls">
+                    <button class="counter-btn" onclick="changeCount('B', -1)">−</button>
+                    <span class="counter-display" id="countB">2</span>
+                    <button class="counter-btn" onclick="changeCount('B', 1)">+</button>
+                </div>
+                <div class="items-display" id="itemsB"></div>
             </div>
-            <!-- tanda + -->
-            <div class="hidden sm:flex items-center justify-center">
-              <div class="w-12 h-12 rounded-full bg-white/15 border border-white/20 flex items-center justify-center text-2xl">+</div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="action-btn" onclick="randomizeNumbers()">🎲 Acak</button>
+            <button class="action-btn" onclick="combineGroups()">🔄 Gabungkan</button>
+            <button class="action-btn" onclick="reset()">🔄 Reset</button>
+        </div>
+
+        <div class="result-section" id="resultSection" style="display: none;">
+            <div class="equation" id="equation">A + B</div>
+            <div class="answer-input-section" id="answerSection">
+                <div class="answer-prompt">Berapa hasilnya?</div>
+                <div class="answer-controls">
+                    <input type="number" id="answerInput" class="answer-input" placeholder="?" min="0" max="20">
+                    <button class="action-btn check-answer" onclick="checkAnswer()">✓ Periksa</button>
+                </div>
+                <div class="feedback" id="feedback"></div>
             </div>
-            <!-- B -->
-            <div class="group-b flex-1 bg-white/5 rounded-xl border border-white/10 p-4">
-              <div class="flex items-center justify-between mb-2">
-                <h3 class="font-semibold">Kelompok B</h3>
-                <span id="labelB" class="text-white/80 text-sm">2</span>
-              </div>
-              <div id="areaB" class="min-h-[72px] flex flex-wrap gap-2"></div>
+            <div class="result-display" id="resultDisplay"></div>
+            <button class="action-btn count-one-by-one" onclick="countOneByOne()" id="countBtn">🔢 Hitung Satu per Satu</button>
+            <div class="tip">
+                💡 <strong>Tip:</strong> Setelah menekan Tampilkan Hasil, ketuk tiap gambar untuk melihat angkanya, atau pakai "Hitung Satu per Satu".
             </div>
-          </div>
         </div>
+    </div>
 
-        <!-- Persamaan -->
-        <div class="text-center mt-6">
-          <div class="inline-block bg-white/10 px-4 py-2 rounded-full border border-white/20 text-lg">
-            <span id="eqA">3</span> + <span id="eqB">2</span> = <span id="eqQ" class="text-white/70">?</span>
-          </div>
-        </div>
+    <script>
+        let currentImage = '🍎';
+        let countA = 3;
+        let countB = 2;
+        let combined = false;
+        let resultShown = false;
+        let countingIndex = 0;
 
-        <!-- Layers -->
-        <div id="flyLayer" class="pointer-events-none absolute inset-0"></div>
-        <div id="confetti" class="pointer-events-none absolute inset-0"></div>
-      </div>
+        const imageMap = {
+            apple: '🍎',
+            star: '⭐',
+            heart: '❤️',
+            flower: '🌸',
+            ball: '⚽',
+            candy: '🍭'
+        };
 
-      <!-- Hasil -->
-      <div id="resultCard" class="bg-white/10 backdrop-blur rounded-2xl p-5 border border-white/20 shadow-xl hidden">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="font-semibold">Hasil</h3>
-          <div class="flex items-center gap-2">
-            <button id="countOneByOne" class="px-3 py-1 rounded-lg bg-amber-300 text-slate-900 font-semibold hover:bg-amber-200 active:scale-95">Hitung Satu per Satu</button>
-          </div>
-        </div>
+        // Initialize
+        updateDisplay();
 
-        <!-- Grid hasil -->
-        <div id="resultRow" class="min-h-[72px] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
+        // Image selection
+        document.querySelectorAll('.image-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.image-option').forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                currentImage = imageMap[this.dataset.type];
+                updateDisplay();
+            });
+        });
 
-        <!-- Jawaban interaktif -->
-        <div class="mt-6 bg-white/10 rounded-xl p-4 border border-white/20">
-          <p class="text-sm text-white/90 mb-2">Tebak totalnya di sini:</p>
-          <div class="flex items-center gap-3 flex-wrap">
-            <input id="answerInput" type="number" min="0" class="px-4 py-2 rounded-xl text-slate-900 font-semibold outline-none" placeholder="Tulis angka"/>
-            <button id="submitAnswer" class="px-4 py-2 rounded-xl bg-emerald-400 text-slate-900 font-semibold hover:bg-emerald-300 active:scale-95">Kirim Jawaban</button>
-            <button id="revealAnswer" class="px-4 py-2 rounded-xl bg-cyan-400 text-slate-900 font-semibold hover:bg-cyan-300 active:scale-95">Lihat Jawaban</button>
-            <span id="answerMsg" class="ml-2"></span>
-          </div>
-        </div>
-      </div>
-    </section>
+        function changeCount(group, delta) {
+            if (group === 'A') {
+                countA = Math.max(0, Math.min(10, countA + delta));
+                document.getElementById('countA').textContent = countA;
+            } else {
+                countB = Math.max(0, Math.min(10, countB + delta));
+                document.getElementById('countB').textContent = countB;
+            }
+            updateDisplay();
+            resetState();
+        }
 
-    <!-- Footer tip -->
-    <footer class="text-center text-white/80 mt-8">
-      <p>Tip: Setelah menekan Tampilkan Hasil, ketuk tiap gambar untuk melihat angkanya, atau pakai “Hitung Satu per Satu”.</p>
-    </footer>
-  </div>
+        function updateDisplay() {
+            updateGroupDisplay('A', countA);
+            updateGroupDisplay('B', countB);
+            updateEquation();
+        }
 
-  <script>
-    // State
-    const state = {
-      emoji: "🍎",
-      a: 3,
-      b: 2,
-      combining: false,
-      shown: false,
-      counting: false
-    };
+        function updateGroupDisplay(group, count) {
+            const container = document.getElementById(`items${group}`);
+            container.innerHTML = '';
+            
+            for (let i = 0; i < count; i++) {
+                const item = document.createElement('div');
+                item.className = 'item';
+                item.textContent = currentImage;
+                item.addEventListener('click', function() {
+                    this.classList.add('bounce');
+                    setTimeout(() => this.classList.remove('bounce'), 600);
+                });
+                container.appendChild(item);
+            }
+        }
 
-    // Elements
-    const themeSelect = document.getElementById('themeSelect');
-    const countA = document.getElementById('countA');
-    const countB = document.getElementById('countB');
-    const incA = document.getElementById('incA');
-    const decA = document.getElementById('decA');
-    const incB = document.getElementById('incB');
-    const decB = document.getElementById('decB');
+        function updateEquation() {
+            const equation = document.getElementById('equation');
+            equation.textContent = `${countA} + ${countB} = ?`;
+        }
 
-    const labelA = document.getElementById('labelA');
-    const labelB = document.getElementById('labelB');
-    const eqA = document.getElementById('eqA');
-    const eqB = document.getElementById('eqB');
-    const eqQ = document.getElementById('eqQ');
+        function randomizeNumbers() {
+            countA = Math.floor(Math.random() * 6) + 1;
+            countB = Math.floor(Math.random() * 6) + 1;
+            document.getElementById('countA').textContent = countA;
+            document.getElementById('countB').textContent = countB;
+            updateDisplay();
+            resetState();
+        }
 
-    const areaA = document.getElementById('areaA');
-    const areaB = document.getElementById('areaB');
-    const groupsContainer = document.getElementById('groupsContainer');
+        function combineGroups() {
+            combined = true;
+            
+            // Hide controls and show result in the same area
+            const controlsDiv = document.querySelector('.controls');
+            controlsDiv.style.display = 'none';
+            
+            // Show result section
+            const resultSection = document.getElementById('resultSection');
+            resultSection.style.display = 'block';
+            
+            // Create result items immediately
+            const resultDisplay = document.getElementById('resultDisplay');
+            resultDisplay.innerHTML = '';
+            
+            const total = countA + countB;
+            
+            // Add all items to result display with animation
+            for (let i = 0; i < total; i++) {
+                setTimeout(() => {
+                    const item = document.createElement('div');
+                    item.className = 'result-item';
+                    item.textContent = currentImage;
+                    item.addEventListener('click', function() {
+                        if (!this.classList.contains('numbered')) {
+                            this.classList.add('numbered');
+                            this.setAttribute('data-number', Array.from(resultDisplay.children).indexOf(this) + 1);
+                        }
+                        this.classList.add('bounce');
+                        setTimeout(() => this.classList.remove('bounce'), 600);
+                    });
+                    
+                    resultDisplay.appendChild(item);
+                    
+                    // Trigger animation
+                    setTimeout(() => {
+                        item.classList.add('animate-in');
+                    }, 50);
+                }, i * 200);
+            }
 
-    const groupsCard = document.getElementById('groupsCard');
-    const flyLayer = document.getElementById('flyLayer');
-    const confettiLayer = document.getElementById('confetti');
+            // Update equation to show question mark
+            document.getElementById('equation').textContent = `${countA} + ${countB} = ?`;
+        }
 
-    const resultCard = document.getElementById('resultCard');
-    const resultRow = document.getElementById('resultRow');
+        function showResult() {
+            // This function is no longer needed as results are shown in combineGroups
+            return;
+        }
 
-    const randomBtn = document.getElementById('randomBtn');
-    const combineBtn = document.getElementById('combineBtn');
-    const showBtn = document.getElementById('showBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const countOneByOneBtn = document.getElementById('countOneByOne');
+        function countOneByOne() {
+            const items = document.querySelectorAll('.result-item');
+            
+            // Remove all existing numbers first
+            items.forEach(item => {
+                item.classList.remove('numbered');
+                item.removeAttribute('data-number');
+            });
+            
+            // Reset counting index
+            countingIndex = 0;
+            
+            // Add numbers one by one with animation
+            const addNumber = () => {
+                if (countingIndex < items.length) {
+                    const item = items[countingIndex];
+                    const numberToShow = countingIndex + 1;
+                    
+                    // Add the numbered class and set the data attribute
+                    item.classList.add('numbered');
+                    item.setAttribute('data-number', numberToShow);
+                    
+                    // Add bounce animation
+                    item.classList.add('bounce');
+                    setTimeout(() => item.classList.remove('bounce'), 600);
+                    
+                    countingIndex++;
+                    
+                    // Continue to next number after delay
+                    if (countingIndex < items.length) {
+                        setTimeout(addNumber, 1000);
+                    }
+                }
+            };
+            
+            // Start counting after a short delay
+            setTimeout(addNumber, 300);
+        }
 
-    const answerInput = document.getElementById('answerInput');
-    const submitAnswer = document.getElementById('submitAnswer');
-    const revealAnswer = document.getElementById('revealAnswer');
-    const answerMsg = document.getElementById('answerMsg');
+        function resetState() {
+            combined = false;
+            resultShown = false;
+            document.getElementById('resultSection').style.display = 'none';
+            document.querySelector('.controls').style.display = 'grid';
+            
+            // Reset answer section
+            document.getElementById('answerInput').value = '';
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('feedback').className = 'feedback';
+            document.getElementById('answerSection').style.display = 'block';
+            document.getElementById('equation').classList.remove('correct');
+        }
 
-    // Helpers
-    const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+        function checkAnswer() {
+            const userAnswer = parseInt(document.getElementById('answerInput').value);
+            const correctAnswer = countA + countB;
+            const feedback = document.getElementById('feedback');
+            const equation = document.getElementById('equation');
+            
+            if (userAnswer === correctAnswer) {
+                // Correct answer
+                feedback.textContent = '🎉 Benar! Hebat sekali!';
+                feedback.className = 'feedback correct';
+                
+                // Update equation to show the answer
+                equation.textContent = `${countA} + ${countB} = ${correctAnswer}`;
+                equation.classList.add('correct');
+                
+                // Hide the answer input section after correct answer
+                setTimeout(() => {
+                    document.getElementById('answerSection').style.display = 'none';
+                }, 2000);
+                
+            } else if (isNaN(userAnswer)) {
+                // No answer entered
+                feedback.textContent = '❓ Silakan masukkan jawaban!';
+                feedback.className = 'feedback incorrect';
+            } else {
+                // Wrong answer
+                feedback.textContent = '❌ Coba lagi! Hitung dengan teliti.';
+                feedback.className = 'feedback incorrect';
+                
+                // Clear the input for retry
+                setTimeout(() => {
+                    document.getElementById('answerInput').value = '';
+                    document.getElementById('answerInput').focus();
+                }, 1000);
+            }
+        }
 
-    function makeEmojiItem(char) {
-      const span = document.createElement('span');
-      span.className = 'emoji-item emoji floaty';
-      span.textContent = char;
-      span.style.transitionDelay = (Math.random() * 0.12) + 's';
-      return span;
-    }
+        // Allow Enter key to check answer
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('answerInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkAnswer();
+                }
+            });
+        });
 
-    function setCounts(a, b) {
-      state.a = clamp(a, 0, 10);
-      state.b = clamp(b, 0, 10);
-      countA.value = state.a;
-      countB.value = state.b;
-      state.shown = false;
-      resultCard.classList.add('hidden');
-      eqQ.textContent = '?';
-      renderGroups();
-    }
-
-    function renderGroups() {
-      labelA.textContent = state.a;
-      labelB.textContent = state.b;
-      eqA.textContent = state.a;
-      eqB.textContent = state.b;
-
-      areaA.innerHTML = '';
-      areaB.innerHTML = '';
-      for (let i = 0; i < state.a; i++) areaA.appendChild(makeEmojiItem(state.emoji));
-      for (let i = 0; i < state.b; i++) areaB.appendChild(makeEmojiItem(state.emoji));
-
-      groupsContainer.classList.remove('combining');
-    }
-
-    function buildResultItem(index, emojiChar) {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'bg-white/10 border border-white/20 rounded-xl p-3 flex flex-col items-center justify-center gap-2 hover:bg-white/15 cursor-pointer select-none';
-
-      const face = document.createElement('div');
-      face.className = 'emoji pop';
-      face.textContent = emojiChar;
-
-      const label = document.createElement('span');
-      label.textContent = index.toString();
-      label.className = 'text-sm px-2 py-0.5 rounded-full bg-sky-300/80 text-slate-900 font-bold shadow';
-      label.style.opacity = 0;
-
-      wrapper.addEventListener('click', () => {
-        label.style.opacity = 1;
-        wrapper.classList.add('pop');
-        setTimeout(() => wrapper.classList.remove('pop'), 320);
-      });
-
-      wrapper.appendChild(face);
-      wrapper.appendChild(label);
-      return wrapper;
-    }
-
-    function renderResult(withPop = true) {
-      const total = state.a + state.b;
-      resultRow.innerHTML = '';
-      for (let i = 1; i <= total; i++) {
-        const item = buildResultItem(i, state.emoji);
-        if (!withPop) item.classList.remove('pop');
-        resultRow.appendChild(item);
-      }
-    }
-
-    function celebrate() {
-      confettiLayer.innerHTML = '';
-      const colors = ['#FDE047', '#34D399', '#60A5FA', '#F472B6', '#F97316', '#22D3EE', '#A78BFA'];
-      const rect = confettiLayer.getBoundingClientRect();
-      const count = 26;
-      for (let i = 0; i < count; i++) {
-        const piece = document.createElement('div');
-        piece.className = 'confetti-piece';
-        piece.style.left = (Math.random() * rect.width) + 'px';
-        piece.style.top = (Math.random() * 40 + 10) + 'px';
-        piece.style.background = colors[i % colors.length];
-        piece.style.transform = `translateY(0) rotate(${Math.random() * 90}deg)`;
-        piece.style.animationDelay = (Math.random() * 200) + 'ms';
-        confettiLayer.appendChild(piece);
-      }
-      setTimeout(() => { confettiLayer.innerHTML = ''; }, 1600);
-    }
-
-    // Gabungkan: geser menyatu (semua item B meluncur ke A, lalu buka Hasil)
-    function combineSlideMerge() {
-      if (state.combining) return;
-      const items = Array.from(areaB.children);
-      if (!items.length) {
-        // Tidak ada yang dipindahkan, langsung tampilkan hasil
-        state.shown = true;
-        resultCard.classList.remove('hidden');
-        renderResult(true);
-        return;
-      }
-      state.combining = true;
-      combineBtn.disabled = true;
-      combineBtn.classList.add('opacity-60');
-
-      const cardRect = groupsCard.getBoundingClientRect();
-      const targetRect = areaA.getBoundingClientRect();
-      const targetX = targetRect.left - cardRect.left + targetRect.width / 2;
-      const targetY = targetRect.top - cardRect.top + targetRect.height / 2;
-
-      items.forEach((orig, i) => {
-        const r = orig.getBoundingClientRect();
-        const startX = r.left - cardRect.left + r.width / 2;
-        const startY = r.top - cardRect.top + r.height / 2;
-
-        // Sembunyikan aslinya saat terbang
-        setTimeout(() => { orig.style.opacity = 0; }, i * 120);
-
-        // Buat klon terbang
-        const flyer = document.createElement('div');
-        flyer.className = 'fly emoji';
-        flyer.textContent = state.emoji;
-        flyer.style.left = (startX - 22) + 'px'; // offset kecil agar center
-        flyer.style.top = (startY - 22) + 'px';
-        flyLayer.appendChild(flyer);
-
-        // Trigger animasi setelah reflow
-        setTimeout(() => {
-          const dx = targetX - startX + (Math.random()*20 - 10); // sedikit variasi
-          const dy = targetY - startY + (Math.random()*12 - 6);
-          flyer.style.transform = `translate(${dx}px, ${dy}px) scale(0.95)`;
-          flyer.style.opacity = 0.9;
-        }, 20 + i * 120);
-
-        // Setelah selesai terbang, hapus klon
-        setTimeout(() => {
-          flyer.remove();
-          // Pada item terakhir, selesaikan gabungan
-          if (i === items.length - 1) {
-            // Perbarui state: semua dari B berpindah ke A
-            state.a = clamp(state.a + items.length, 0, 20);
-            state.b = 0;
-            renderGroups();
-            labelA.textContent = state.a;
-            labelB.textContent = '0';
-            eqA.textContent = state.a;
-            eqB.textContent = '0';
-
-            // Tampilkan hasil otomatis
-            state.shown = true;
-            resultCard.classList.remove('hidden');
-            resultCard.classList.add('slide-in-up');
-            setTimeout(() => resultCard.classList.remove('slide-in-up'), 420);
-            renderResult(true);
-            // Pastikan angka di bawah gambar tersembunyi dulu
-            setTimeout(() => {
-              document.querySelectorAll('#resultRow > div > span:last-child').forEach(l => l.style.opacity = 0);
-            }, 30);
-
-            // Selesai
-            state.combining = false;
-            combineBtn.disabled = false;
-            combineBtn.classList.remove('opacity-60');
-          }
-        }, 700 + i * 120);
-      });
-    }
-
-    // Events
-    themeSelect.addEventListener('change', () => {
-      state.emoji = themeSelect.value;
-      renderGroups();
-      if (state.shown) renderResult(false);
-    });
-
-    // Tombol +/-
-    incA.addEventListener('click', () => setCounts(state.a + 1, state.b));
-    decA.addEventListener('click', () => setCounts(state.a - 1, state.b));
-    incB.addEventListener('click', () => setCounts(state.a, state.b + 1));
-    decB.addEventListener('click', () => setCounts(state.a, state.b - 1));
-
-    // Input manual
-    countA.addEventListener('input', () => setCounts(parseInt(countA.value || 0, 10), state.b));
-    countB.addEventListener('input', () => setCounts(state.a, parseInt(countB.value || 0, 10)));
-
-    randomBtn.addEventListener('click', () => {
-      const a = Math.floor(Math.random() * 11);
-      const b = Math.floor(Math.random() * 11);
-      setCounts(a, b);
-      eqQ.classList.add('slide-in-up');
-      setTimeout(() => eqQ.classList.remove('slide-in-up'), 420);
-    });
-
-    combineBtn.addEventListener('click', combineSlideMerge);
-
-    showBtn.addEventListener('click', () => {
-      state.shown = true;
-      renderGroups();
-      resultCard.classList.remove('hidden');
-      resultCard.classList.add('slide-in-up');
-      setTimeout(() => resultCard.classList.remove('slide-in-up'), 420);
-      renderResult(true);
-      setTimeout(() => {
-        document.querySelectorAll('#resultRow > div > span:last-child').forEach(l => l.style.opacity = 0);
-      }, 30);
-    });
-
-    resetBtn.addEventListener('click', () => {
-      state.emoji = '🍎';
-      themeSelect.value = state.emoji;
-      setCounts(3, 2);
-    });
-
-    // Hitung satu per satu (otomatis)
-    countOneByOneBtn.addEventListener('click', () => {
-      if (state.counting) return;
-      const items = Array.from(resultRow.children);
-      if (!items.length) return;
-
-      state.counting = true;
-      countOneByOneBtn.disabled = true;
-      countOneByOneBtn.classList.add('opacity-60');
-
-      // reset semua label ke tersembunyi dulu
-      items.forEach(el => {
-        const label = el.querySelector('span:last-child');
-        if (label) label.style.opacity = 0;
-      });
-
-      items.forEach((el, i) => {
-        setTimeout(() => {
-          const label = el.querySelector('span:last-child');
-          if (label) label.style.opacity = 1;
-          el.classList.add('pop');
-          setTimeout(() => el.classList.remove('pop'), 320);
-          if (i === items.length - 1) {
-            state.counting = false;
-            countOneByOneBtn.disabled = false;
-            countOneByOneBtn.classList.remove('opacity-60');
-            celebrate();
-          }
-        }, i * 350);
-      });
-    });
-
-    // Jawaban interaktif
-    function setAnswerMsg(text, ok = false) {
-      answerMsg.textContent = text;
-      answerMsg.className = ok ? 'text-emerald-200 font-semibold' : 'text-rose-200 font-semibold';
-    }
-
-    submitAnswer.addEventListener('click', () => {
-      const val = parseInt((answerInput.value || '').trim(), 10);
-      const total = state.a + state.b;
-      if (isNaN(val)) {
-        setAnswerMsg('Isi dulu angkanya ya!');
-        return;
-      }
-      if (val === total) {
-        setAnswerMsg('Betul! 🎉', true);
-        celebrate();
-      } else {
-        setAnswerMsg('Belum tepat. Coba hitung lagi.');
-      }
-    });
-
-    revealAnswer.addEventListener('click', () => {
-      const total = state.a + state.b;
-      answerInput.value = total;
-      setAnswerMsg('Ini jawabannya. Mantap! ✅', true);
-    });
-
-    // Init
-    function init() {
-      renderGroups();
-      resultCard.classList.add('hidden');
-    }
-    init();
-  </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97124c9f71b6b5b4',t:'MTc1NTUyOTQyMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+        function reset() {
+            countA = 3;
+            countB = 2;
+            document.getElementById('countA').textContent = countA;
+            document.getElementById('countB').textContent = countB;
+            updateDisplay();
+            resetState();
+            
+            // Reset answer section
+            document.getElementById('answerInput').value = '';
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('feedback').className = 'feedback';
+            document.getElementById('answerSection').style.display = 'block';
+            document.getElementById('equation').classList.remove('correct');
+        }
+    </script>
+</body>
 </html>
