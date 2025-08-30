@@ -59,11 +59,45 @@
             text-align: center;
         }
 
-        .image-options {
+        .image-selector-container {
+            position: relative;
             display: flex;
+            align-items: center;
             justify-content: center;
             gap: 15px;
-            flex-wrap: wrap;
+        }
+
+        .nav-arrow {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-arrow:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .nav-arrow:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .image-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 300px;
         }
 
         .image-option {
@@ -88,8 +122,12 @@
 
         .image-option .emoji {
             font-size: 2rem;
-            display: block;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             margin-bottom: 5px;
+            text-align: center;
+            width: 100%;
         }
 
         .image-option .label {
@@ -362,13 +400,13 @@
 
         @keyframes equationUpdate {
             0% { transform: scale(1); color: white; }
-            50% { transform: scale(1.1); color: #48bb78; }
-            100% { transform: scale(1); color: #48bb78; }
+            50% { transform: scale(1.1); color: white; }
+            100% { transform: scale(1); color: white; }
         }
 
         .equation.correct {
             animation: equationUpdate 1s ease;
-            color: #48bb78 !important;
+            color: white !important;
         }
 
         @keyframes bounce {
@@ -425,31 +463,12 @@
 
         <div class="image-selector">
             <h3 class="selector-title">Pilih Gambar</h3>
-            <div class="image-options">
-                <div class="image-option active" data-type="apple">
-                    <span class="emoji">🍎</span>
-                    <div class="label">Apel</div>
+            <div class="image-selector-container">
+                <button class="nav-arrow" id="prevBtn" onclick="previousPage()">‹</button>
+                <div class="image-options" id="imageOptions">
+                    <!-- Images will be populated by JavaScript -->
                 </div>
-                <div class="image-option" data-type="star">
-                    <span class="emoji">⭐</span>
-                    <div class="label">Bintang</div>
-                </div>
-                <div class="image-option" data-type="heart">
-                    <span class="emoji">❤️</span>
-                    <div class="label">Hati</div>
-                </div>
-                <div class="image-option" data-type="flower">
-                    <span class="emoji">🌸</span>
-                    <div class="label">Bunga</div>
-                </div>
-                <div class="image-option" data-type="ball">
-                    <span class="emoji">⚽</span>
-                    <div class="label">Bola</div>
-                </div>
-                <div class="image-option" data-type="candy">
-                    <span class="emoji">🍭</span>
-                    <div class="label">Permen</div>
-                </div>
+                <button class="nav-arrow" id="nextBtn" onclick="nextPage()">›</button>
             </div>
         </div>
 
@@ -507,27 +526,93 @@
         let resultShown = false;
         let countingIndex = 0;
 
+        const imageData = [
+            { type: 'apple', emoji: '🍎', label: 'Apel' },
+            { type: 'star', emoji: '⭐', label: 'Bintang' },
+            { type: 'heart', emoji: '❤️', label: 'Hati' },
+            { type: 'flower', emoji: '🌸', label: 'Bunga' },
+            { type: 'ball', emoji: '⚽', label: 'Bola' },
+            { type: 'candy', emoji: '🍭', label: 'Permen' },
+            { type: 'car', emoji: '🚗', label: 'Mobil' },
+            { type: 'cat', emoji: '🐱', label: 'Kucing' },
+            { type: 'dog', emoji: '🐶', label: 'Anjing' },
+            { type: 'fish', emoji: '🐟', label: 'Ikan' },
+            { type: 'sun', emoji: '☀️', label: 'Matahari' },
+            { type: 'chicken', emoji: '🐔', label: 'Ayam' }
+        ];
+
         const imageMap = {
             apple: '🍎',
             star: '⭐',
             heart: '❤️',
             flower: '🌸',
             ball: '⚽',
-            candy: '🍭'
+            candy: '🍭',
+            car: '🚗',
+            cat: '🐱',
+            dog: '🐶',
+            fish: '🐟',
+            sun: '☀️',
+            chicken: '🐔'
         };
+
+        let currentPage = 0;
+        const itemsPerPage = 4;
 
         // Initialize
         updateDisplay();
+        updateImageSelector();
 
-        // Image selection
-        document.querySelectorAll('.image-option').forEach(option => {
-            option.addEventListener('click', function() {
-                document.querySelectorAll('.image-option').forEach(opt => opt.classList.remove('active'));
-                this.classList.add('active');
-                currentImage = imageMap[this.dataset.type];
-                updateDisplay();
-            });
-        });
+        function updateImageSelector() {
+            const container = document.getElementById('imageOptions');
+            const startIndex = currentPage * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, imageData.length);
+            
+            container.innerHTML = '';
+            
+            for (let i = startIndex; i < endIndex; i++) {
+                const item = imageData[i];
+                const option = document.createElement('div');
+                option.className = 'image-option';
+                option.dataset.type = item.type;
+                
+                if (item.type === 'apple' && currentPage === 0) {
+                    option.classList.add('active');
+                }
+                
+                option.innerHTML = `
+                    <span class="emoji">${item.emoji}</span>
+                    <div class="label">${item.label}</div>
+                `;
+                
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.image-option').forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    currentImage = imageMap[this.dataset.type];
+                    updateDisplay();
+                });
+                
+                container.appendChild(option);
+            }
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = currentPage === 0;
+            document.getElementById('nextBtn').disabled = endIndex >= imageData.length;
+        }
+
+        function previousPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                updateImageSelector();
+            }
+        }
+
+        function nextPage() {
+            if ((currentPage + 1) * itemsPerPage < imageData.length) {
+                currentPage++;
+                updateImageSelector();
+            }
+        }
 
         function changeCount(group, delta) {
             if (group === 'A') {
